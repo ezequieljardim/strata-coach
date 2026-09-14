@@ -128,5 +128,7 @@ src/
   calendar.tsx    calendar, day detail, feedback, notes
   lib.ts          types, per-athlete data loading and calculations
   i18n.ts         every UI string, per language
+  theme.ts        light/dark/system theme, remembered per browser; colors are CSS tokens
+  ThemePicker.tsx the three-way theme switch
   styles.css
 ```

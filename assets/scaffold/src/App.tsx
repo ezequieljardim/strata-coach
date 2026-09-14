@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ContextPanel, ProgressPanel, RunsPanel, TrackedPanel } from "./panels";
 import { CalendarPanel, NotesPanel } from "./calendar";
+import { ThemePicker } from "./ThemePicker";
+import { useTheme } from "./theme";
 import { config, currentWeek, daysUntil, goalDate, nextSession, plan, slug, t, weekday } from "./lib";
 
 export default function App() {
@@ -13,6 +15,7 @@ export default function App() {
     { id: "notes", label: t.tabs.notes },
   ];
   const [tab, setTab] = useState("progress");
+  const theme = useTheme();
   const left = daysUntil(goalDate);
   const next = nextSession();
   const g = config.goal;
@@ -77,10 +80,11 @@ export default function App() {
               {x.label}
             </button>
           ))}
+          <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />
         </nav>
       </header>
 
-      <main>
+      <main key={theme.resolved}>
         {tab === "progress" && <ProgressPanel />}
         {tab === "calendar" && <CalendarPanel />}
         {issue && <TrackedPanel key={issue.id} issue={issue} />}

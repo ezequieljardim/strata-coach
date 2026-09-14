@@ -31,33 +31,32 @@ import {
 } from "./lib";
 import type { TrackedIssue } from "./lib";
 import { Detail } from "./calendar";
+import { css } from "./theme";
 
 const planDay = (date: string) => plan.weeks.flatMap((w) => w.days).find((d) => d.date === date);
 
-const BLUE = "#5b9dd9";
-const ORANGE = "#e08a4a";
-const RED = "#c4553f";
-const GREEN = "#6aa87a";
-const GREY = "#5a6070";
-
-const axisProps = {
-  stroke: "#6b7280",
-  fontSize: 11,
-  tickLine: false,
-  axisLine: { stroke: "#2a2f3a" },
-};
+// Chart colors come from the CSS theme tokens. They're read at module evaluation for the
+// first theme and again on every theme switch, because App remounts <main> with the theme as key.
+let BLUE = "", ORANGE = "", RED = "", GREEN = "", GREY = "", GRID = "";
+let axisProps = { stroke: "", fontSize: 11, tickLine: false, axisLine: { stroke: "" } };
+let tooltipColors = { bg: "", line: "", ink: "" };
+function readColors() {
+  [BLUE, ORANGE, RED, GREEN, GREY, GRID] = ["--blue", "--orange", "--chart-red", "--green", "--chart-grey", "--line"].map(css);
+  axisProps = { stroke: css("--axis"), fontSize: 11, tickLine: false, axisLine: { stroke: css("--axis-line") } };
+  tooltipColors = { bg: css("--card"), line: css("--axis-line"), ink: css("--ink") };
+}
 
 const MARGIN = { top: 8, right: 14, left: 6, bottom: 0 };
 
 function tooltipStyle() {
   return {
     contentStyle: {
-      background: "#161a22",
-      border: "1px solid #2a2f3a",
+      background: tooltipColors.bg,
+      border: `1px solid ${tooltipColors.line}`,
       borderRadius: 8,
       fontSize: 12,
     },
-    labelStyle: { color: "#e6e8ec" },
+    labelStyle: { color: tooltipColors.ink },
   };
 }
 
@@ -113,6 +112,7 @@ function Stat({ v, l, hint }: { v: React.ReactNode; l: string; hint?: string }) 
 // ------------------------------------------------------------ progress
 
 export function ProgressPanel() {
+  readColors();
   const r = weeklySummary();
   const tot = totals();
   const pct = Math.round((tot.kmDone / tot.kmPlanned) * 100);
@@ -134,7 +134,7 @@ export function ProgressPanel() {
       <Card title={t.weeklyVolume} sub={t.weeklyVolumeSub} wide>
         <ResponsiveContainer width="100%" height={260}>
           <ComposedChart data={r} margin={MARGIN}>
-            <CartesianGrid stroke="#232833" vertical={false} />
+            <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey="label" {...axisProps} />
             <YAxis {...yAxis()} />
             <Tooltip {...tip(t.units.km)} />
@@ -190,6 +190,7 @@ export function ProgressPanel() {
 
 /** One tab per entry in `config.tracked`. Knows nothing about any specific symptom. */
 export function TrackedPanel({ issue }: { issue: TrackedIssue }) {
+  readColors();
   const km = issue.keyMetric;
   const r = weeklySummary()
     .map((s) => ({ ...s, value: s.tracked[issue.id] }))
@@ -205,7 +206,7 @@ export function TrackedPanel({ issue }: { issue: TrackedIssue }) {
           {r.some((s) => s.value != null) ? (
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={r} margin={MARGIN}>
-                <CartesianGrid stroke="#232833" vertical={false} />
+                <CartesianGrid stroke={GRID} vertical={false} />
                 <XAxis dataKey="label" {...axisProps} />
                 <YAxis {...yAxis()} />
                 <Tooltip {...tip(km.unit)} />
@@ -293,6 +294,7 @@ export function TrackedPanel({ issue }: { issue: TrackedIssue }) {
 // ------------------------------------------------------------ runs
 
 export function RunsPanel() {
+  readColors();
   const [open, setOpen] = useState<string | null>(null);
   const data = runs.map((s) => ({
     date: fmtDate(s.date),
@@ -312,7 +314,7 @@ export function RunsPanel() {
         <Card title={t.cadence} sub={t.cadenceSub(cad.base, cad.target, cad.reference)} wide>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={data} margin={MARGIN}>
-              <CartesianGrid stroke="#232833" vertical={false} />
+              <CartesianGrid stroke={GRID} vertical={false} />
               <XAxis dataKey="date" {...axisProps} />
               <YAxis {...yAxis({ domain: [140, 185] })} />
               <Tooltip {...tip(t.units.spm)} />
@@ -331,7 +333,7 @@ export function RunsPanel() {
       >
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={data} margin={MARGIN}>
-            <CartesianGrid stroke="#232833" vertical={false} />
+            <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey="date" {...axisProps} />
             <YAxis {...yAxis({ domain: [90, 190] })} />
             <Tooltip {...tip(t.units.bpm)} />
@@ -400,6 +402,7 @@ export function RunsPanel() {
 // ------------------------------------------------------------ context
 
 export function ContextPanel() {
+  readColors();
   const sleep = series("sleep");
   const weight = series("weight");
   const rhr = series("restingHr");
@@ -418,7 +421,7 @@ export function ContextPanel() {
         </div>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={sleep} margin={MARGIN}>
-            <CartesianGrid stroke="#232833" vertical={false} />
+            <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey="date" {...axisProps} interval={2} />
             <YAxis {...yAxis({ domain: [0, 10] })} />
             <Tooltip {...tip(t.units.h)} />
@@ -432,7 +435,7 @@ export function ContextPanel() {
       <Card title={t.weight} sub={t.weightSub}>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={weight} margin={MARGIN}>
-            <CartesianGrid stroke="#232833" vertical={false} />
+            <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey="date" {...axisProps} interval={3} />
             <YAxis {...yAxis({ domain: ["dataMin - 0.5", "dataMax + 0.5"] })} />
             <Tooltip {...tip(t.units.kg)} />
@@ -444,7 +447,7 @@ export function ContextPanel() {
       <Card title={t.restingHr} sub={t.restingHrSub}>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={rhr} margin={MARGIN}>
-            <CartesianGrid stroke="#232833" vertical={false} />
+            <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey="date" {...axisProps} interval={3} />
             <YAxis {...yAxis({ domain: ["dataMin - 3", "dataMax + 3"] })} />
             <Tooltip {...tip(t.units.bpm)} />

@@ -104,6 +104,7 @@ const es = {
 
   // picker
   pickAthlete: "Elegí de quién es el plan",
+  theme: { label: "Tema", system: "Automático", light: "Claro", dark: "Oscuro" },
 };
 
 export type Strings = typeof es;
@@ -196,6 +197,7 @@ const en: Strings = {
   zoneCols: { zone: "Zone", pace: "Pace", hr: "HR", feel: "Feel" },
 
   pickAthlete: "Whose plan?",
+  theme: { label: "Theme", system: "Auto", light: "Light", dark: "Dark" },
 };
 
 const DICTS: Record<string, Strings> = { es, en };

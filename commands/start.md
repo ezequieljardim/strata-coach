@@ -98,6 +98,13 @@ Follow `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/deploy.md`. **Before the
 deploying, check `/` returns 401 without credentials. Adding an athlete to an existing deploy is
 just a commit and push; remind them everyone with the site password sees every athlete.
 
+**Where the data lives.** The project folder is the athlete's (or the household's) own repo: their
+plans and health data, plus a copy of the app. It belongs in a **private** GitHub repository owned
+by them — not in the plugin's repo, and not in someone else's. On a first setup, offer to create it
+(`gh repo create <name> --private --source . --push`, after they confirm the name and account) and
+connect it to their Vercel project. Several people in one household can share one repo and one
+password; unrelated people each get their own.
+
 Commit with only the new athlete's folder (plus the scaffold on a first setup). Tell them the next
 steps: `/running-coach:session <slug>` after each run, `/running-coach:weekly <slug>` at the end of
 each week, and `tools/export.sh --athlete <slug>` for backups.
