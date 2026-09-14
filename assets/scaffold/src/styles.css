@@ -377,10 +377,49 @@ td.wrap { white-space: normal; min-width: 220px; }
 .picker a:hover { border-color: var(--blue); }
 
 /* Theme picker: three small segments in the nav row. */
-.themePick { margin-left: auto; display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.heroSide { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
+.themePick { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
 .themePick button { border: 0; border-radius: 0; padding: 6px 11px; font-size: 13px; background: transparent;
   color: var(--muted); cursor: pointer; font-family: inherit; line-height: 1; }
 .themePick button + button { border-left: 1px solid var(--line); }
 .themePick button:hover { color: var(--ink); }
 .themePick button.on { background: var(--sunken); color: var(--ink); }
 .picker .themePick { margin: 0 0 8px; }
+
+/* ── Notes: the plan's "why", read like short articles ─────────────────────── */
+.noteToc { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 14px; }
+.noteToc a { color: var(--muted); text-decoration: none; font-size: 12.5px; border: 1px solid var(--line);
+  border-radius: 999px; padding: 4px 11px; }
+.noteToc a:hover { color: var(--ink); border-color: var(--line-strong); }
+.note { scroll-margin-top: 16px; padding: 22px 24px; }
+.note h2 { font-size: 17px; letter-spacing: -.01em; }
+.noteBody { max-width: 780px; margin-top: 12px; }
+.noteBody p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.72; color: var(--soft-ink); }
+.noteBody strong { color: var(--ink); font-weight: 650; }
+.noteLead { font-size: 16px !important; line-height: 1.5 !important; color: var(--ink) !important;
+  font-weight: 600; padding-left: 12px; border-left: 3px solid var(--blue); }
+.noteSection { margin: 18px 0 14px; }
+/* Text after "LABEL:" starts in lowercase. */
+.noteSection > p::first-letter, .noteMeaning::first-letter { text-transform: uppercase; }
+.noteSection h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--ink);
+  letter-spacing: .01em; }
+.notePoints { margin: -4px 0 12px; padding: 0; list-style: none; }
+.notePoints li { position: relative; padding: 6px 0 6px 18px; font-size: 14px; line-height: 1.6;
+  color: var(--soft-ink); }
+.notePoints li::before { content: ""; position: absolute; left: 4px; top: 14px; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--line-strong); }
+.arrowSep { color: var(--muted); }
+.noteDefs { display: grid; gap: 8px; margin: 6px 0 14px; }
+.noteDef { display: grid; grid-template-columns: 96px 1fr; gap: 2px 14px; padding: 10px 12px;
+  border-radius: 8px; background: var(--sunken); border-left: 3px solid var(--line-strong); font-size: 14px; line-height: 1.6; }
+.noteTerm { font-weight: 700; color: var(--ink); }
+.noteMeaning { color: var(--soft-ink); }
+.noteAction { grid-column: 2; color: var(--ink); font-weight: 500; }
+.noteDef.green { border-left-color: var(--green); } .noteDef.green .noteTerm { color: var(--green-ink); }
+.noteDef.yellow { border-left-color: var(--orange); } .noteDef.yellow .noteTerm { color: var(--orange-ink); }
+.noteDef.red { border-left-color: var(--red); } .noteDef.red .noteTerm { color: var(--red-ink); }
+@media (max-width: 620px) {
+  .note { padding: 18px 16px; }
+  .noteDef { grid-template-columns: 1fr; }
+  .noteAction { grid-column: 1; }
+}

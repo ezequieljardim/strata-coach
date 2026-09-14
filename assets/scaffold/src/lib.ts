@@ -264,6 +264,61 @@ export function parseDetail(detail: string): DetailBlock[] {
     });
 }
 
+// ------------------------------------------------------------ plan notes, structured
+
+/**
+ * Plan notes are prose written for the athlete, with a loose grammar: an all-caps opening
+ * sentence as a headline, "LABEL: text" sections, "HYPOTHESIS 1 - text", "TERM = meaning ->
+ * action" rows, and indented lines as sub-points. This turns them into blocks so the Notes tab
+ * reads like an article instead of a code dump. Unmatched text becomes a paragraph: nothing lost.
+ */
+export type NoteBlock =
+  | { kind: "lead"; text: string }
+  | { kind: "para"; text: string; items: string[] }
+  | { kind: "section"; title: string; text: string; items: string[] }
+  | { kind: "defs"; items: { term: string; text: string; action?: string }[] };
+
+const NOTE_LABEL = /^([A-ZÁÉÍÓÚÜÑ0-9][A-ZÁÉÍÓÚÜÑ0-9 ,'"()/·]{2,}):\s*(.*)$/s;
+const NOTE_NUMBERED = /^([A-ZÁÉÍÓÚÜÑ]{3,} \d+)\s+-\s+(.*)$/s;
+const NOTE_DEF = /^([A-ZÁÉÍÓÚÜÑ][A-ZÁÉÍÓÚÜÑ ]{1,24}?)\s*=\s*(.+?)(?:\s*->\s*(.+))?$/;
+const hasLower = (x: string) => /[a-záéíóúüñ]/.test(x);
+
+/** "COMO SE DISTINGUEN, GRATIS" → "Como se distinguen, gratis". */
+export function sentenceCase(x: string): string {
+  const l = x.toLocaleLowerCase(config.locale.lang);
+  return l.charAt(0).toLocaleUpperCase(config.locale.lang) + l.slice(1);
+}
+
+export function parseNote(body: string): NoteBlock[] {
+  const out: NoteBlock[] = [];
+  for (const block of body.split(/\n\s*\n/).map((b) => b.replace(/\s+$/, "")).filter(Boolean)) {
+    const lines = block.split("\n");
+    const main = lines.filter((l) => !/^\s{2,}\S/.test(l)).map((l) => l.trim());
+    const items = lines.filter((l) => /^\s{2,}\S/.test(l)).map((l) => l.trim());
+    const text = main.join(" ");
+
+    const defs = main.map((l) => l.match(NOTE_DEF));
+    if (main.length > 1 && defs.every(Boolean) || (main.length === 1 && defs[0] && defs[0][3])) {
+      out.push({ kind: "defs", items: defs.map((m) => ({ term: m![1].trim(), text: m![2], action: m![3] })) });
+      continue;
+    }
+    const label = text.match(NOTE_LABEL) ?? text.match(NOTE_NUMBERED);
+    if (label && !hasLower(label[1])) {
+      out.push({ kind: "section", title: sentenceCase(label[1]), text: label[2], items });
+      continue;
+    }
+    // An all-caps first sentence is a headline; the rest of the paragraph follows it.
+    const first = text.match(/^([^a-záéíóúüñ]+?[.!?])(\s+|$)(.*)$/s);
+    if (first && /[A-ZÁÉÍÓÚÜÑ]{3}/.test(first[1]) && first[1].length > 12) {
+      out.push({ kind: "lead", text: sentenceCase(first[1]) });
+      if (first[3] || items.length) out.push({ kind: "para", text: first[3], items });
+      continue;
+    }
+    out.push({ kind: "para", text, items });
+  }
+  return out;
+}
+
 /** A running session (excludes recovery walks). */
 export function isRun(s: DoneSession): boolean {
   return (s.type ?? "run") === "run";

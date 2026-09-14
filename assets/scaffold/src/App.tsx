@@ -41,9 +41,12 @@ export default function App() {
                 .join(" · ")}
             </p>
           </div>
-          <div className="countdown">
-            <span className="n">{left}</span>
-            <span className="l">{t.day(left)}</span>
+          <div className="heroSide">
+            <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />
+            <div className="countdown">
+              <span className="n">{left}</span>
+              <span className="l">{t.day(left)}</span>
+            </div>
           </div>
         </div>
 
@@ -80,7 +83,6 @@ export default function App() {
               {x.label}
             </button>
           ))}
-          <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />
         </nav>
       </header>
 

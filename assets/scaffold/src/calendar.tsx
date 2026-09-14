@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { config, currentWeek, fmtDate, parseDetail, plan, runs, sessions, t, TODAY, weekday } from "./lib";
+import { config, currentWeek, fmtDate, parseDetail, parseNote, plan, runs, sessions, t, TODAY, weekday } from "./lib";
 import type { DoneSession, Feedback, PlanDay, Week } from "./lib";
 
 const ICON: Record<string, string> = {
@@ -340,12 +340,95 @@ export function NotesPanel() {
         </section>
       )}
 
+      {plan.notes.length > 1 && (
+        <nav className="noteToc card full" aria-label={t.tabs.notes}>
+          {plan.notes.map((n) => (
+            <a key={n.id} href={`#note-${n.id}`} onClick={(e) => { e.preventDefault(); document.getElementById(`note-${n.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+              {n.title}
+            </a>
+          ))}
+        </nav>
+      )}
+
       {plan.notes.map((n) => (
-        <section key={n.id} className="card full">
+        <article key={n.id} id={`note-${n.id}`} className="card full note">
           <h2>{n.title}</h2>
-          <pre className="longNote">{n.body}</pre>
-        </section>
+          <div className="noteBody">
+            {parseNote(n.body).map((b, i) => <NoteBlockView key={i} b={b} />)}
+          </div>
+        </article>
       ))}
     </>
   );
+}
+
+// ------------------------------------------------------------ notes rendering
+
+const LIGHT_TERMS: Record<string, string> = {
+  VERDE: "green", GREEN: "green", AMARILLO: "yellow", YELLOW: "yellow", ROJO: "red", RED: "red",
+};
+/** Acronyms that stay as written instead of becoming emphasis. */
+const ACRONYMS = new Set(["RPE", "GPS", "VO2", "LTHR", "HRV", "FC", "BPM", "KM", "PDF", "API"]);
+
+/**
+ * Inline text: "->" becomes an arrow and ALL-CAPS runs (the author's way of stressing a word
+ * in plain text) become bold in normal case. Acronyms and anything with digits are left alone.
+ */
+function Rich({ text }: { text: string }) {
+  const parts = text.split(/(\s*->\s*|(?<![\p{L}\d])\p{Lu}{2,}(?:[ ,]+\p{Lu}{2,})*(?![\p{L}\d]))/u);
+  return (
+    <>
+      {parts.map((p, i) => {
+        if (!p) return null;
+        if (/^\s*->\s*$/.test(p)) return <span key={i} className="arrowSep"> → </span>;
+        if (i % 2 === 1 && !ACRONYMS.has(p) && /[AEIOUÁÉÍÓÚ]/.test(p)) {
+          return <strong key={i}>{p.toLocaleLowerCase(config.locale.lang)}</strong>;
+        }
+        return <span key={i}>{p}</span>;
+      })}
+    </>
+  );
+}
+
+function SubPoints({ items }: { items: string[] }) {
+  if (!items.length) return null;
+  return (
+    <ul className="notePoints">
+      {items.map((x, j) => <li key={j}><Rich text={x} /></li>)}
+    </ul>
+  );
+}
+
+function NoteBlockView({ b }: { b: ReturnType<typeof parseNote>[number] }) {
+  switch (b.kind) {
+    case "lead":
+      return <p className="noteLead"><Rich text={b.text} /></p>;
+    case "section":
+      return (
+        <section className="noteSection">
+          <h3>{b.title}</h3>
+          {b.text && <p><Rich text={b.text} /></p>}
+          <SubPoints items={b.items} />
+        </section>
+      );
+    case "defs":
+      return (
+        <div className="noteDefs">
+          {b.items.map((d, j) => (
+            <div key={j} className={"noteDef " + (LIGHT_TERMS[d.term] ?? "")}>
+              <span className="noteTerm">{d.term.charAt(0) + d.term.slice(1).toLocaleLowerCase(config.locale.lang)}</span>
+              <span className="noteMeaning"><Rich text={d.text} /></span>
+              {d.action && <span className="noteAction">→ <Rich text={d.action} /></span>}
+            </div>
+          ))}
+        </div>
+      );
+    default:
+      return (
+        <>
+          {b.text && <p><Rich text={b.text} /></p>}
+          <SubPoints items={b.items} />
+        </>
+      );
+  }
 }

@@ -83,6 +83,11 @@ order.
 }
 ```
 
+Note bodies are plain text in the athlete's language with a light grammar the Notes tab renders:
+an ALL-CAPS first sentence is a headline, `LABEL: text` a subheading, `TERM = meaning -> action`
+lines colored rows (VERDE/AMARILLO/ROJO or GREEN/YELLOW/RED), indented lines bullets, `->` an arrow,
+CAPS WORDS bold. Blank lines separate blocks.
+
 Weeks run Monday to Sunday with all 7 days present. `tools/plan.py skeleton` creates them empty.
 `km`/`min` of a day are the source; `weeks[].sessions`, `plannedKm` and `hours` are derived — never
 hand-edit them, run `tools/plan.py derive`. A workout with `type: "race"` becomes the race event

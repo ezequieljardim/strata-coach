@@ -4,7 +4,8 @@ Training dashboards for one or more runners: plan vs actual, calendar with the f
 of every day, per-session coach feedback, recovery context, and charts for any symptom being
 followed. Each athlete lives at `/<slug>`.
 
-Vite + React + TypeScript + Recharts. Static site, no backend.
+Vite + React + TypeScript + Recharts. Static site, no backend. Light, dark or system theme, picked
+next to the countdown and remembered per browser.
 
 ---
 
@@ -97,6 +98,22 @@ dashboard tab with its key metric week over week, a log of its `fields`, and its
   "redFlags": ["…"]
 }
 ```
+
+### `plan.json → notes`
+
+The whys the athlete rereads, shown in the Notes tab as short articles with an index. Plain text
+with a light grammar, so an agent can write them without markup:
+
+| Write | Renders as |
+|---|---|
+| an ALL-CAPS first sentence. | a highlighted headline |
+| `LABEL: text` or `HYPOTHESIS 1 - text` | a subheading and its paragraph |
+| `GREEN = meaning -> action` (one per line) | colored rows (green/yellow/red terms get colors) |
+| indented lines | bullet points |
+| `->` inside text | → |
+| WORDS IN CAPS | **bold** |
+
+Blank lines separate blocks. Anything else is a paragraph; no text is ever dropped.
 
 ### `context.json`
 

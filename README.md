@@ -34,6 +34,14 @@ and opens the dashboard locally. Run it again in the same folder to add another 
 | `/running-coach:weekly [slug]` | end of the week: progress, repeat or stop |
 | `/running-coach:status [slug]` | read-only: where do I stand |
 
+## What the dashboard shows
+
+Per athlete, at `/<slug>`: plan progress and weekly volume, a calendar with every day's full
+prescription and the coach's feedback on done days, one tab per tracked issue (key metric week
+over week, log, traffic light), runs with cadence and HR charts, recovery context (sleep, resting
+HR, weight), and the plan's notes as short articles. Light, dark or system theme. A picker at `/`
+when there's more than one athlete.
+
 ## What you need
 
 - Claude Code, Node 20+, Python 3, git.
