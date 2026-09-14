@@ -1,0 +1,3 @@
+# Sitio personal con datos de salud: fuera de buscadores.
+User-agent: *
+Disallow: /

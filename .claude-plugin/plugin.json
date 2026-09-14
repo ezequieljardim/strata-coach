@@ -1,0 +1,9 @@
+{
+  "name": "running-coach",
+  "displayName": "Running Coach",
+  "version": "0.1.0",
+  "description": "Coach one or more runners with Claude: an interview builds a personal plan, /session loads each run and gives feedback, and a password-protected dashboard per athlete deploys to Vercel.",
+  "author": { "name": "Ezequiel Jardim" },
+  "license": "MIT",
+  "keywords": ["running", "training-plan", "coaching", "dashboard", "vercel"]
+}

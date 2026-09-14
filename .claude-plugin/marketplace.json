@@ -1,0 +1,14 @@
+{
+  "name": "running-coach",
+  "owner": {
+    "name": "Ezequiel Jardim"
+  },
+  "description": "Running Coach plugin: personal running plans, per-session feedback and a dashboard per athlete.",
+  "plugins": [
+    {
+      "name": "running-coach",
+      "source": "./",
+      "description": "Personal running plans, per-session feedback and a dashboard per athlete."
+    }
+  ]
+}
