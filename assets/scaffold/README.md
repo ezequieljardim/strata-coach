@@ -5,7 +5,7 @@ of every day, per-session coach feedback, recovery context, and charts for any s
 followed. Each athlete lives at `/<slug>`.
 
 Vite + React + TypeScript + Recharts. Static site, no backend. Light, dark or system theme, picked
-next to the countdown and remembered per browser.
+under the header and remembered per browser.
 
 ---
 

@@ -377,7 +377,7 @@ td.wrap { white-space: normal; min-width: 220px; }
 .picker a:hover { border-color: var(--blue); }
 
 /* Theme picker: three small segments in the nav row. */
-.heroSide { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
+.themeRow { display: flex; justify-content: flex-end; margin: 12px 0 -6px; }
 .themePick { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
 .themePick button { border: 0; border-radius: 0; padding: 6px 11px; font-size: 13px; background: transparent;
   color: var(--muted); cursor: pointer; font-family: inherit; line-height: 1; }

@@ -41,13 +41,14 @@ export default function App() {
                 .join(" · ")}
             </p>
           </div>
-          <div className="heroSide">
-            <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />
-            <div className="countdown">
-              <span className="n">{left}</span>
-              <span className="l">{t.day(left)}</span>
-            </div>
+          <div className="countdown">
+            <span className="n">{left}</span>
+            <span className="l">{t.day(left)}</span>
           </div>
+        </div>
+
+        <div className="themeRow">
+          <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />
         </div>
 
         <div className="strips">
