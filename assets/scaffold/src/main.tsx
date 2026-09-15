@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import { athleteNames, config, slug, slugs, t } from "./lib";
+import { athleteNames, athleteUiLangs, config, slug, slugs, t } from "./lib";
 import { stringsFor } from "./i18n";
 import { ThemePicker } from "./ThemePicker";
 import { useTheme } from "./theme";
@@ -15,8 +15,10 @@ const store = {
 
 /** No athlete in the URL: nothing to choose → go; otherwise a plain list of links. */
 function Picker() {
-  const t = stringsFor(navigator.language);
+  // No athlete chosen yet: use their shared language, or the browser's when they differ.
+  const t = stringsFor(athleteUiLangs.length === 1 ? athleteUiLangs[0] : navigator.language);
   const theme = useTheme();
+  document.documentElement.lang = t.htmlLang;
   return (
     <div className="app picker">
       <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />

@@ -178,6 +178,8 @@ if (!slugs.length) {
   throw new Error("no athletes under /athletes");
 }
 export const athleteNames = Object.fromEntries(slugs.map((s) => [s, athletes[s].config.athlete.name]));
+/** Dashboard languages (es/en) the athletes use; the picker at "/" speaks theirs when they agree. */
+export const athleteUiLangs = [...new Set(slugs.map((s) => stringsFor(athletes[s].config.locale.lang).htmlLang))];
 
 const fromUrl = decodeURIComponent(location.pathname.split("/")[1] ?? "");
 /** The athlete in the URL, or null when the URL doesn't name one (main.tsx routes that). */
