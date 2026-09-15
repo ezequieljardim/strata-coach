@@ -56,7 +56,14 @@ Plugins aren't available in the app's cloud sessions or in WSL sessions.
 
 If the GitHub repo is private, Claude Code uses your git credentials (`gh auth login`, Keychain, or
 an SSH key loaded in `ssh-agent`). With several GitHub accounts, make sure the active one has access
-(`gh auth status`, `gh auth switch`). Background auto-updates can't authenticate over HTTPS: use SSH
+(`gh auth status`, `gh auth switch`).
+
+The `owner/repo` shorthand clones over SSH as `git@github.com`. If that host authenticates as a
+different account on your machine (`ssh -T git@github.com` tells you which), add the marketplace
+with a full git URL that uses the right SSH host alias instead, e.g.
+`claude plugin marketplace add git@github-personal:ezequieljardim/strata-coach.git`.
+
+Background auto-updates can't authenticate over HTTPS: use SSH
 or update by hand with `claude plugin marketplace update strata` and `claude plugin update strata`.
 
 ### Updating
