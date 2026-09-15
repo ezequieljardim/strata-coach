@@ -93,6 +93,7 @@ and opens the dashboard locally. Run it again in the same folder to add another 
 | `/strata:session [slug]` | after each run: load it and get feedback |
 | `/strata:weekly [slug]` | end of the week: progress, repeat or stop |
 | `/strata:status [slug]` | read-only: where do I stand |
+| `/strata:help [command]` | what's available and what to run next |
 
 ## What the dashboard shows
 
