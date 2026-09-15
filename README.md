@@ -73,8 +73,8 @@ claude plugin marketplace update strata
 claude plugin update strata
 ```
 
-Start a new session afterwards. This updates the skill and commands; the dashboard code already
-copied into your repo doesn't change.
+Start a new session afterwards. This updates the skill and commands; then run **`/strata:upgrade`**
+in your repo to bring its dashboard app up to date and migrate the data if the format changed.
 
 ## Use
 
@@ -93,6 +93,8 @@ and opens the dashboard locally. Run it again in the same folder to add another 
 | `/strata:session [slug]` | after each run: load it and get feedback |
 | `/strata:weekly [slug]` | end of the week: progress, repeat or stop |
 | `/strata:status [slug]` | read-only: where do I stand |
+| `/strata:goal [update\|new] [slug]` | adjust the goal, or close the cycle and start a new one (history kept) |
+| `/strata:upgrade` | after updating the plugin: update the app in your repo and migrate its data |
 | `/strata:help [command]` | what's available and what to run next |
 
 ## What the dashboard shows

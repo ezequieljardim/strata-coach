@@ -48,7 +48,7 @@ import argparse, base64, glob, json, os, statistics as st, sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from athlete import ROOT, load, resolve, save  # noqa: E402
+from athlete import ROOT, cycle_of, load, require_schema, resolve, save  # noqa: E402
 
 WORK = os.environ.get("HAE_WORK", "/home/claude/hae")
 RAW, OUT = f"{WORK}/raw", f"{WORK}/out"
@@ -285,6 +285,7 @@ PARTIAL = ["steps", "restingHr", "hrv"]   # incomplete in a mid-morning export
 
 def cmd_merge(args):
     a = resolve(args.athlete, args.root)
+    require_schema(a)
     cfg, hae = settings(a)
     cap = hae["easyDayHrCap"]
     res = json.load(open(f"{OUT}/summary.json"))
@@ -314,10 +315,6 @@ def cmd_merge(args):
         save(a, "context", ctx)
 
     # ---------------------------------------------------------- sessions
-    plan = load(a, "plan")
-    def week_of(f):
-        return next((w["n"] for w in plan["weeks"] if w["from"] <= f <= w["to"]), None)
-
     ses = load(a, "sessions")
     new_entries = []
     for w in res["workouts"]:
@@ -332,8 +329,9 @@ def cmd_merge(args):
                 continue                      # already reviewed by the athlete: untouched
             ses["sessions"].remove(prev)
             changes.append(f"session REGENERATED {w['date']} (still pending report)")
+        cycle, week = cycle_of(a, w["date"])   # both None for a run between cycles
         e = {
-            "date": w["date"], "week": week_of(w["date"]), "done": True,
+            "date": w["date"], "cycle": cycle, "week": week, "done": True,
             "type": w["type"], "km": w["km"], "minutes": w["minutes"],
             "avgHr": w["avgHr"], "maxHr": w["maxHr"],
             "cadence": w.get("cadence"),

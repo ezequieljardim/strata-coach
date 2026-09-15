@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Builds and keeps a plan.json consistent.
 
-    python3 tools/plan.py skeleton --athlete <slug> --start 2027-01-04 --weeks 16
-    python3 tools/plan.py derive   --athlete <slug> [--check]
+    python3 tools/plan.py skeleton --athlete <slug> --cycle <id> --start 2027-01-04 [--weeks 16]
+    python3 tools/plan.py derive   --athlete <slug> [--cycle <id>] [--check]
+
+Plans live in athletes/<slug>/cycles/<id>/plan.json, next to that cycle's cycle.json.
 
 skeleton  Writes empty weeks (Monday to Sunday, every day present, no workouts) from a start
           Monday and a number of weeks, ending the week that contains config.goal.date when
@@ -17,25 +19,27 @@ derive    Recomputes what is duplicated from `days[].workouts`: `weeks[].session
 import argparse, datetime as dt, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from athlete import load, resolve, save
+from athlete import active_cycle, cycle_file, load_cycle, load_plan, require_schema, resolve, save_json
 
 
 def iso(d):
     return d.strftime("%Y-%m-%d")
 
 
-def skeleton(a, start, weeks):
-    cfg = load(a, "config")
+def skeleton(a, cid, start, weeks):
+    if not os.path.exists(cycle_file(a, cid, "cycle")):
+        sys.exit(f"write athletes/{a.slug}/cycles/{cid}/cycle.json (id, status, goal) first")
+    cycle = load_cycle(a, cid)
     s = dt.date.fromisoformat(start)
     if s.weekday() != 0:
         sys.exit(f"--start must be a Monday, {start} is not")
     if weeks is None:
-        goal = cfg["goal"].get("date")
+        goal = cycle["goal"].get("date")
         if not goal:
             sys.exit("--weeks is required when the goal has no date")
         g = dt.date.fromisoformat(goal)
         weeks = (g - s).days // 7 + 1
-    if os.path.exists(a.path("plan")) and load(a, "plan").get("weeks"):
+    if os.path.exists(cycle_file(a, cid, "plan")) and load_plan(a, cid).get("weeks"):
         sys.exit("plan.json already has weeks: refusing to overwrite a plan")
     plan = {"phases": [], "notes": [], "weeks": []}
     for n in range(weeks):
@@ -46,8 +50,11 @@ def skeleton(a, start, weeks):
             "sessions": [],
             "days": [{"date": iso(w0 + dt.timedelta(days=i)), "workouts": []} for i in range(7)],
         })
-    save(a, "plan", plan)
-    print(f"athletes/{a.slug}/plan.json: {weeks} empty weeks from {start}")
+    save_json(cycle_file(a, cid, "plan"), plan)
+    # the cycle's dates follow its plan
+    cycle.update({"from": plan["weeks"][0]["from"], "to": plan["weeks"][-1]["to"]})
+    save_json(cycle_file(a, cid, "cycle"), cycle)
+    print(f"athletes/{a.slug}/cycles/{cid}/plan.json: {weeks} empty weeks from {start}")
 
 
 def derived(w):
@@ -60,8 +67,8 @@ def derived(w):
     }
 
 
-def derive(a, check):
-    plan = load(a, "plan")
+def derive(a, cid, check):
+    plan = load_plan(a, cid)
     diffs = []
     for w in plan["weeks"]:
         for k, v in derived(w).items():
@@ -74,23 +81,26 @@ def derive(a, check):
     if check:
         print("OK: sessions, plannedKm and hours match the workouts." if not diffs else f"{len(diffs)} difference(s).")
         return 1 if diffs else 0
-    save(a, "plan", plan)
-    print(f"athletes/{a.slug}/plan.json: {len(diffs)} field(s) updated")
+    save_json(cycle_file(a, cid, "plan"), plan)
+    print(f"athletes/{a.slug}/cycles/{cid}/plan.json: {len(diffs)} field(s) updated")
     return 0
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("skeleton"); s.add_argument("--athlete"); s.add_argument("--start", required=True)
+    s = sub.add_parser("skeleton"); s.add_argument("--athlete"); s.add_argument("--cycle", required=True)
+    s.add_argument("--start", required=True)
     s.add_argument("--weeks", type=int)
-    d = sub.add_parser("derive"); d.add_argument("--athlete"); d.add_argument("--check", action="store_true")
+    d = sub.add_parser("derive"); d.add_argument("--athlete"); d.add_argument("--cycle")
+    d.add_argument("--check", action="store_true")
     args = ap.parse_args()
     a = resolve(args.athlete)
+    require_schema(a)
     if args.cmd == "skeleton":
-        skeleton(a, args.start, args.weeks)
+        skeleton(a, args.cycle, args.start, args.weeks)
         return 0
-    return derive(a, args.check)
+    return derive(a, args.cycle or active_cycle(a), args.check)
 
 
 if __name__ == "__main__":

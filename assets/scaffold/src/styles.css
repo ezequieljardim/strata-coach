@@ -423,3 +423,15 @@ td.wrap { white-space: normal; min-width: 220px; }
   .noteDef { grid-template-columns: 1fr; }
   .noteAction { grid-column: 1; }
 }
+
+/* Cycles: picker next to the theme switch, and a banner when looking at a past one. */
+.themeRow { gap: 10px; align-items: center; }
+.cyclePick { display: inline-flex; align-items: center; gap: 8px; margin-right: auto; font-size: 12px; color: var(--muted); }
+.cyclePick select { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 10px; font: inherit; font-size: 12.5px; }
+.pastBanner { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--sunken);
+  border: 1px solid var(--line); font-size: 13px; color: var(--soft-ink); }
+.pastBanner a { color: var(--blue); }
+.countdown.past .n { color: var(--green); }
+.cycleLink { color: var(--ink); text-decoration: none; border-bottom: 1px dotted var(--line-strong); }
+.cycleLink:hover { color: var(--blue); }

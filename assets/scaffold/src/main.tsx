@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import { athleteNames, athleteUiLangs, config, slug, slugs, t } from "./lib";
+import { athleteNames, athleteUiLangs, config, goal, needsUpgrade, slug, slugs, t } from "./lib";
 import { stringsFor } from "./i18n";
 import { ThemePicker } from "./ThemePicker";
 import { useTheme } from "./theme";
@@ -43,9 +43,11 @@ if (!slug && onRoot && (slugs.length === 1 || (last && slugs.includes(last)))) {
   if (slug) {
     store.set(slug);
     document.documentElement.lang = t.htmlLang;
-    document.title = config.goal.name ? `${config.athlete.name} · ${config.goal.name}` : config.athlete.name;
+    document.title = goal.name ? `${config.athlete.name} · ${goal.name}` : config.athlete.name;
   }
   createRoot(document.getElementById("root")!).render(
-    <StrictMode>{slug ? <App /> : <Picker />}</StrictMode>,
+    <StrictMode>
+      {!slug ? <Picker /> : needsUpgrade ? <p className="app empty">{t.upgradeNeeded}</p> : <App />}
+    </StrictMode>,
   );
 }

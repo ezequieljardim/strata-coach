@@ -10,7 +10,8 @@ are several, **ask whose session it is before touching anything** — writing on
 another's file is the easiest mistake in this repo. From here on `<slug>` is that athlete and
 `A = athletes/<slug>/`.
 
-Use the `training` skill for every judgment call. Before anything: `git pull`, then read `A/config.json` and `A/HANDOFF.md`. If `A/CLAUDE.md`
+Use the `training` skill for every judgment call. Before anything: `git pull`, then read `A/config.json`, `A/HANDOFF.md`, and the active cycle
+`C = A/cycles/<config.activeCycle>/` (`cycle.json` for the goal, `plan.json` for the prescription). If `A/CLAUDE.md`
 exists, its rules apply on top of the repo's.
 
 Speak to the athlete in `config.locale.lang` with `config.locale.tone`. Everything written into
@@ -22,7 +23,8 @@ the JSON (notes, feedback) is in that language too.
    `./tools/hae/sync-local.sh --athlete <slug>`. If it fails, read the error first; the usual
    failure modes are in `tools/hae/README.md`. With `"manual"`, ask for distance, duration, avg
    and max HR, cadence if they have it.
-2. Find today's entry in `A/sessions.json`. With `"pendingReport": true` the objective data is
+2. Find today's entry in `A/sessions.json` (manual entries: set `cycle` and `week` from the plan week
+   that contains the date, both `null` if none). With `"pendingReport": true` the objective data is
    already there.
 3. **Ask for what no sensor measures**, before writing anything:
    - one question per `config.tracked[]` issue, built from its `fields[].prompt` (skip the whole
@@ -105,7 +107,7 @@ Template rules:
   - Never a diagnosis. A tracked issue's `redFlags` mean: stop and see a doctor — say so plainly.
 - **Total time goes first in §4**, before the detail: the sum of `min` of every workout on that
   date, not just the run. People underestimate how long sessions take and end up rushing.
-- **§4 is verbatim from `plan.json`**, not rewritten or summarized: it's what they have to do.
+- **§4 is verbatim from `C/plan.json`**, not rewritten or summarized: it's what they have to do.
   Drop the watch block (already loaded on the watch) unless the session is a new format.
 - The recovery row uses `context.json`. HRV averaged from fewer than 6 readings is shown as "—".
   In a morning export `restingHr`, `hrv` and `steps` are `null`.

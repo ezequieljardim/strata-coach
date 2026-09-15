@@ -8,8 +8,9 @@ Tell the athlete how they're doing, using the `training` skill. Read-only: nothi
 **Athlete:** `$ARGUMENTS`. If empty and there is exactly one folder in `athletes/`, it's that one;
 with several, ask. `A = athletes/<slug>/`. Answer in `config.locale.lang`.
 
-1. Read `A/HANDOFF.md` (current state and open items) and `A/config.json`.
-2. From `A/sessions.json` and `A/plan.json`:
+1. Read `A/HANDOFF.md` (current state and open items), `A/config.json`, and the active cycle
+   `C = A/cycles/<config.activeCycle>/` (`cycle.json`).
+2. From `A/sessions.json` (entries with `cycle` = the active one) and `C/plan.json`:
    - which session is next and what it prescribes **verbatim**;
    - running km and minutes this week, planned against actual;
    - the per-block HR peak series of the last sessions of the same format;

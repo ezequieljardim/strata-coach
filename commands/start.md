@@ -58,26 +58,13 @@ running), say it now, with the why, and offer the realistic version. The decisio
 
 `A = athletes/<slug>/`.
 
-1. `A/config.json` per `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/data-model.md`: goal, `schedule.days`, `rules` (drop
-   `easyDayHrCap` if there's no HR), zones only if you can estimate them honestly (mark them
-   provisional in `zones.note`), cadence only if it'll be trained, gear, tracked, locale, ingest,
-   `calendar.uidPrefix` = slug.
+1. `A/config.json` per `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/data-model.md`: `schemaVersion: 2`, `activeCycle` (the id below),
+   `schedule.days`, `rules` (drop `easyDayHrCap` if there's no HR), zones only if you can estimate
+   them honestly (mark them provisional in `zones.note`), cadence only if it'll be trained, gear,
+   tracked, locale, ingest, `calendar.uidPrefix` = slug.
 2. `A/sessions.json` → `{"sessions": []}`; `A/context.json` → `{"sleepTarget": 7, "days": []}`.
-3. The plan, per `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/plan-building.md`:
-   ```bash
-   python3 tools/plan.py skeleton --athlete <slug> --start <next monday> [--weeks N]
-   ```
-   Propose the **shape first** (phases, weeks, deloads, tests, where the long run peaks) in a short
-   table and get an OK. Then fill `days[].workouts` a few weeks at a time, following
-   `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/instrumentation.md`, in the athlete's language. Add `phases` and the `notes` whose
-   why they'll want to reread.
-4. Close the plan:
-   ```bash
-   python3 tools/plan.py derive --athlete <slug>
-   python3 tools/check-min.py --athlete <slug>
-   python3 tools/validate.py --athlete <slug>
-   python3 tools/gen-ics.py --athlete <slug>
-   ```
+3. **The first cycle and its plan**: follow "Creating a cycle" in `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/plan-building.md` (cycle id,
+   `cycle.json`, skeleton, shape approved first, weeks filled a few at a time, closing checks).
 5. `A/HANDOFF.md`, in the athlete's language: who they are, goal and why this target, where they
    start, the body (tracked issues, hypotheses as questions for a doctor, red flags), the plan's
    shape and its rules, how their data comes in, current state ("week 0"), open items, decisions

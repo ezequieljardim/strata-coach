@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Checks that the plan's minutes add up with the watch workout.
 
-    python3 tools/check-min.py [--athlete <slug>]
+    python3 tools/check-min.py [--athlete <slug>] [--cycle <id>]
 
 `min` is hand-written and duplicated in three places (`days[].workouts[].min`,
 `weeks[].sessions[].min` and `weeks[].hours`), so it drifts every time the plan is
@@ -16,7 +16,7 @@ The block may be written in Spanish (plans from before the migration) or English
 import argparse, os, re, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from athlete import load, resolve
+from athlete import load_plan, require_schema, resolve
 
 WATCH = re.compile(r'^(WATCH WORKOUT|WORKOUT DEL RELOJ)')
 DUR = re.compile(r'(\d+)\s*min|(\d+):(\d\d)\b|(\d+)\s*(?:seg|sec)')
@@ -63,7 +63,11 @@ def duration(block):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--athlete")
-    plan = load(resolve(ap.parse_args().athlete), "plan")
+    ap.add_argument("--cycle", help="cycle id (default: the active one)")
+    args = ap.parse_args()
+    a = resolve(args.athlete)
+    require_schema(a)
+    plan = load_plan(a, args.cycle)
 
     errors, unverified = [], []
     for week in plan['weeks']:

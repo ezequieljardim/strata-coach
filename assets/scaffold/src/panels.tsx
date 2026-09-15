@@ -13,8 +13,12 @@ import {
   YAxis,
 } from "recharts";
 import {
+  allRuns,
+  allSessions,
   average,
   config,
+  cycles,
+  cycleUrl,
   context,
   currentWeek,
   fmtDate,
@@ -455,6 +459,113 @@ export function ContextPanel() {
           </LineChart>
         </ResponsiveContainer>
       </Card>
+    </>
+  );
+}
+
+// ------------------------------------------------------------ history
+
+const month = (date: string) => date.slice(0, 7);
+const monthLabel = (m: string) => `${m.slice(5)}/${m.slice(2, 4)}`;
+
+/** Across every cycle and between them: what a single plan's tabs can't show. */
+export function HistoryPanel() {
+  readColors();
+  const km = new Map<string, number>();
+  for (const r of allRuns) km.set(month(r.date), (km.get(month(r.date)) ?? 0) + r.km);
+  const volume = [...km].sort(([a], [b]) => a.localeCompare(b)).map(([m, v]) => ({ label: monthLabel(m), km: +v.toFixed(1) }));
+
+  const rhr = new Map<string, number[]>();
+  for (const d of context.days) {
+    if (d.restingHr == null) continue;
+    rhr.set(month(d.date), [...(rhr.get(month(d.date)) ?? []), d.restingHr]);
+  }
+  const rhrMonthly = [...rhr].sort(([a], [b]) => a.localeCompare(b))
+    .map(([m, v]) => ({ label: monthLabel(m), value: Math.round(v.reduce((a, b) => a + b, 0) / v.length) }));
+
+  return (
+    <>
+      <Card title={t.cycles} wide>
+        <div className="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{t.cycleCols.goal}</th>
+                <th>{t.cycleCols.dates}</th>
+                <th>{t.cycleCols.status}</th>
+                <th>{t.cycleCols.result}</th>
+                <th className="n">{t.cycleCols.runs}</th>
+                <th className="n">{t.cycleCols.km}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cycles.map((c) => {
+                const rs = allRuns.filter((r) => r.cycle === c.id);
+                return (
+                  <tr key={c.id} className={c.id === config.activeCycle ? "current" : ""}>
+                    <td><a className="cycleLink" href={cycleUrl(c.id)}>{c.goal.name ?? c.goal.target ?? c.id}</a></td>
+                    <td>{fmtDate(c.from)}/{c.from.slice(2, 4)} – {fmtDate(c.to)}/{c.to.slice(2, 4)}</td>
+                    <td>{t.cycleStatus[c.status]}</td>
+                    <td className="wrap">{c.result ? [c.result.time, c.result.summary].filter(Boolean).join(" · ") : "—"}</td>
+                    <td className="n">{rs.length}</td>
+                    <td className="n">{+rs.reduce((a, b) => a + b.km, 0).toFixed(1)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card title={t.monthlyVolume} sub={t.monthlyVolumeSub} wide>
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart data={volume} margin={MARGIN}>
+            <CartesianGrid stroke={GRID} vertical={false} />
+            <XAxis dataKey="label" {...axisProps} />
+            <YAxis {...yAxis()} />
+            <Tooltip {...tip(t.units.km)} />
+            <Bar dataKey="km" name={t.kmRun} fill={BLUE} radius={[3, 3, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+
+      {config.tracked.filter((ti) => ti.keyMetric).map((ti) => {
+        const km = ti.keyMetric!;
+        const data = allSessions
+          .map((s) => ({ date: fmtDate(s.date), value: s.tracked?.[ti.id]?.[km.field] }))
+          .filter((d): d is { date: string; value: number } => typeof d.value === "number");
+        return (
+          <Card key={ti.id} title={t.allTime(ti.label)} sub={t.allTimeSub} wide>
+            {data.length ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={data} margin={MARGIN}>
+                  <CartesianGrid stroke={GRID} vertical={false} />
+                  <XAxis dataKey="date" {...axisProps} />
+                  <YAxis {...yAxis()} />
+                  <Tooltip {...tip(km.unit)} />
+                  <Line type="monotone" dataKey="value" name={km.label} stroke={ORANGE} strokeWidth={2} dot={{ r: 3 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="empty">{t.trackedNone}</p>
+            )}
+          </Card>
+        );
+      })}
+
+      {rhrMonthly.length > 0 && (
+        <Card title={t.restingHrMonthly} sub={t.restingHrMonthlySub} wide>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={rhrMonthly} margin={MARGIN}>
+              <CartesianGrid stroke={GRID} vertical={false} />
+              <XAxis dataKey="label" {...axisProps} />
+              <YAxis {...yAxis({ domain: ["dataMin - 3", "dataMax + 3"] })} />
+              <Tooltip {...tip(t.units.bpm)} />
+              <Line type="monotone" dataKey="value" name={t.restingHrShort} stroke={GREEN} strokeWidth={2} dot={{ r: 3 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+      )}
     </>
   );
 }

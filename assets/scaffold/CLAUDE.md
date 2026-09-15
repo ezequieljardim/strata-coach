@@ -3,7 +3,9 @@
 Training dashboards **and full coaching context** for one or more runners. Vite + React +
 TypeScript + Recharts, static, no backend. Deployed on Vercel.
 
-One folder per athlete under `athletes/<slug>/`; the dashboard lives at `/<slug>`. One password
+One folder per athlete under `athletes/<slug>/`; the dashboard lives at `/<slug>`. Each goal is a
+**cycle** (`athletes/<slug>/cycles/<id>/`) with its own plan; past cycles stay browsable at
+`/<slug>/<id>`, and sessions and context span all of them. One password
 for the whole site: it's meant for a family or friends who can see each other's data.
 
 ## Start here — if you arrive without context
@@ -19,9 +21,10 @@ for the whole site: it's meant for a family or friends who can see each other's 
 4. Frequent tasks — loading a session, the weekly review, moving a session, regenerating the
    calendar — are in **[`docs/runbooks.md`](docs/runbooks.md)**.
 
-Commands (from the `strata` plugin, or `.claude/commands/` when present): **`/session [slug]`**
+Commands (from the `strata` plugin): **`/session [slug]`**
 loads today's session and gives the feedback, **`/weekly [slug]`** closes the week, **`/status [slug]`**
-says how they're doing against the plan without writing anything, **`/start`** adds an athlete.
+says how they're doing against the plan without writing anything, **`/goal [new|update]`** changes
+or replaces the goal, **`/start`** adds an athlete, **`/upgrade`** updates the app and migrates data.
 
 ---
 
@@ -37,7 +40,7 @@ motivated athletes ask otherwise often. Per-athlete numbers live in `config.json
 4. **If a tracked symptom shows up earlier than last week, the week is repeated.** No progression.
 5. **Volume progression capped at `weeklyVolumeIncreasePct`** per week, and no single session grows
    more than planned.
-6. **An athlete's `plan.json` is never changed without that athlete's explicit approval.** If
+6. **An athlete's plan (`cycles/<id>/plan.json`) is never changed without that athlete's explicit approval.** If
    something looks wrong, report it; don't fix it.
 7. **Never mix athletes.** Zones, caps, rules and conclusions of one never apply to another.
 
@@ -65,13 +68,17 @@ doctor**, never a diagnosis. A tracked issue's `redFlags` mean stop and see a pr
 
 Everything per athlete in `athletes/<slug>/`. No backend: edit the JSON, commit, Vercel republishes.
 
-- **`sessions.json`** — touched often. One entry per activity. Recovery walks are
+- **`sessions.json`** — touched often. One entry per activity, across every cycle; `cycle` and `week`
+  say where it falls (both `null` between cycles). Recovery walks are
   `"type": "walk"` and stay out of running volume and the cadence/HR charts.
   `feedback.matters` and `feedback.whereYouAre` are **arrays of strings**: a bare string blanks the
   whole app.
 - `context.json` — sleep, weight, resting HR, HRV, steps.
-- `plan.json` — the weeks. **Only changes when the training plan changes** (rule 6).
-- `config.json` — goal, schedule, rules, zones, gear, tracked issues, locale, ingest, calendar.
+- `cycles/<id>/cycle.json` — the goal, dates, status (`active` | `completed` | `abandoned`) and result.
+- `cycles/<id>/plan.json` — the weeks. **Only changes when the training plan changes** (rule 6).
+  `cycles/<id>/retro.md` is written when the cycle closes.
+- `config.json` — `schemaVersion`, `activeCycle`, schedule, rules, zones, gear, tracked issues,
+  locale, ingest, calendar.
   The dashboard reads everything athlete-specific from here; `src/` knows no athlete.
 
 If an entry has `"pendingReport": true`, its objective data is good but
@@ -129,7 +136,7 @@ credentials after deploying.
 python3 tools/validate.py                     # the data: tsc can't see it
 npx tsc --noEmit && npm run build
 grep -c SITE_PASSWORD dist/assets/*.js        # must be 0
-python3 tools/check-min.py --athlete <slug>   # only if plan.json changed
+python3 tools/check-min.py --athlete <slug>   # only if a plan changed
 python3 tools/plan.py derive --athlete <slug>  # after editing days[].workouts: rebuilds sessions/km/hours
 ```
 
@@ -140,13 +147,19 @@ segments can't be computed without assuming a pace: they are listed and not vali
 
 ## Calendar
 
-Each athlete's `.ics` is generated from their plan and regenerated whenever `plan.json` changes:
+Each athlete's `.ics` holds every cycle's plan and is regenerated whenever a plan changes:
 
 ```bash
 python3 tools/gen-ics.py --athlete <slug>
 ```
 
 **UIDs are stable**, so re-importing updates events instead of duplicating them.
+
+## Data schema
+
+`config.schemaVersion` says which data format an athlete is on. `python3 tools/migrate.py` brings
+every athlete to the current one (idempotent); the app shows an upgrade notice for older data and
+the tools refuse to run on it.
 
 ## Backups
 

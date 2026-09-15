@@ -47,12 +47,18 @@ One folder per athlete. No backend: edit the JSON, commit, Vercel republishes.
 
 ```
 athletes/<slug>/
-  config.json     goal, schedule, rules, zones, gear, tracked issues, locale, ingest, calendar
-  plan.json       phases, notes and weeks → days → workouts
-  sessions.json   what was done, with the coach's feedback
+  config.json     schemaVersion, activeCycle, schedule, rules, zones, gear, tracked, locale, ingest
+  sessions.json   what was done, with the coach's feedback — every cycle, tagged with its cycle
   context.json    sleep, weight, resting HR, HRV, steps
   HANDOFF.md      everything an agent needs to coach this athlete
+  cycles/<id>/    one goal at a time; past ones kept as they were
+    cycle.json    goal, from/to, status (active | completed | abandoned), result
+    plan.json     phases, notes and weeks → days → workouts
+    retro.md      written when the cycle closes
 ```
+
+The dashboard shows the active cycle at `/<slug>`, any other at `/<slug>/<cycle-id>` (there's a
+picker), and a History tab across all of them.
 
 Adding an athlete is adding a folder. The dashboard, the tools and the commands pick it up.
 
@@ -99,7 +105,7 @@ dashboard tab with its key metric week over week, a log of its `fields`, and its
 }
 ```
 
-### `plan.json → notes`
+### `cycles/<id>/plan.json → notes`
 
 The whys the athlete rereads, shown in the Notes tab as short articles with an index. Plain text
 with a light grammar, so an agent can write them without markup:
@@ -132,6 +138,7 @@ store `null` rather than a half day next to full days.
 | `tools/plan.py skeleton\|derive` | empty weeks for a new plan · rebuild sessions, km and hours from the workouts |
 | `tools/validate.py [--athlete <slug>]` | the JSON against what the dashboard assumes |
 | `tools/export.sh [--athlete <slug>]` | backup tarball outside the repo |
+| `tools/migrate.py` | bring every athlete's data to the current schema (idempotent) |
 
 With a single athlete `--athlete` can be omitted.
 

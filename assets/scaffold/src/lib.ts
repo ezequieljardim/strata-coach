@@ -67,18 +67,35 @@ export type TrackedIssue = {
   redFlags?: string[];
 };
 
+export type Goal = {
+  type: "race" | "distance" | "habit";
+  name?: string;
+  date?: string;
+  time?: string;
+  place?: string;
+  distanceKm?: number;
+  target?: string;
+  stretch?: string;
+};
+
+/**
+ * One goal with its plan, under athletes/<slug>/cycles/<id>/. Past cycles stay as they were,
+ * so their calendar and feedback can still be browsed; sessions and context span all of them.
+ */
+export type Cycle = {
+  id: string;
+  status: "active" | "completed" | "abandoned";
+  from: string;
+  to: string;
+  goal: Goal;
+  /** How it ended: a race time, "finished", or why it was abandoned. */
+  result?: { summary: string; time?: string };
+};
+
 export type Config = {
+  schemaVersion?: number;
+  activeCycle: string;
   athlete: { name: string };
-  goal: {
-    type: "race" | "distance" | "habit";
-    name?: string;
-    date?: string;
-    time?: string;
-    place?: string;
-    distanceKm?: number;
-    target?: string;
-    stretch?: string;
-  };
   schedule: { days: string[] };
   rules: { easyDayHrCap?: number; [k: string]: unknown };
   zones?: {
@@ -117,7 +134,10 @@ export type Feedback = {
 
 export type DoneSession = {
   date: string;
-  week: number;
+  /** The cycle whose plan contains this date, or null for runs between cycles. */
+  cycle: string | null;
+  /** Week of that cycle's plan; null when `cycle` is null. */
+  week: number | null;
   done: boolean;
   /**
    * Recovery walks are marked done on the calendar but do NOT count toward running
@@ -156,19 +176,31 @@ export type ContextDay = {
 
 type Athlete = {
   config: Config;
-  plan: Plan;
   sessions: { sessions: DoneSession[] };
   context: { sleepTarget: number; days: ContextDay[] };
+  cycles: Record<string, { cycle: Cycle; plan: Plan }>;
 };
 
 // ---------------------------------------------------------------- athletes
 
-/** One folder per athlete under /athletes; the folder name is the slug and the URL. */
-const files = import.meta.glob("/athletes/*/*.json", { eager: true, import: "default" });
+/**
+ * One folder per athlete under /athletes; the folder name is the slug and the URL. Each goal is
+ * a cycle in athletes/<slug>/cycles/<id>/; /<slug> shows the active one, /<slug>/<id> any other.
+ */
+const files = import.meta.glob(["/athletes/*/*.json", "/athletes/*/cycles/*/*.json"], {
+  eager: true,
+  import: "default",
+});
 const athletes: Record<string, Athlete> = {};
 for (const [path, data] of Object.entries(files)) {
-  const [, , slug, file] = path.split("/");
-  (athletes[slug] ??= {} as Athlete)[file.replace(".json", "") as keyof Athlete] = data as never;
+  const parts = path.split("/"); // ["", "athletes", slug, file] or [..., "cycles", id, file]
+  const a = (athletes[parts[2]] ??= { cycles: {} } as unknown as Athlete);
+  if (parts[3] === "cycles") {
+    const c = (a.cycles[parts[4]] ??= {} as Athlete["cycles"][string]);
+    (c as Record<string, unknown>)[parts[5].replace(".json", "")] = data;
+  } else {
+    (a as Record<string, unknown>)[parts[3].replace(".json", "")] = data;
+  }
 }
 
 export const slugs = Object.keys(athletes).sort();
@@ -181,19 +213,35 @@ export const athleteNames = Object.fromEntries(slugs.map((s) => [s, athletes[s].
 /** Dashboard languages (es/en) the athletes use; the picker at "/" speaks theirs when they agree. */
 export const athleteUiLangs = [...new Set(slugs.map((s) => stringsFor(athletes[s].config.locale.lang).htmlLang))];
 
-const fromUrl = decodeURIComponent(location.pathname.split("/")[1] ?? "");
+const [, urlSlug = "", urlCycle = ""] = location.pathname.split("/").map(decodeURIComponent);
 /** The athlete in the URL, or null when the URL doesn't name one (main.tsx routes that). */
-export const slug: string | null = slugs.includes(fromUrl) ? fromUrl : null;
+export const slug: string | null = slugs.includes(urlSlug) ? urlSlug : null;
 
-// Module-level data for the athlete in the URL. Switching athlete is a full navigation,
-// so nothing below needs to be reactive. Falls back to the first athlete so that module
-// evaluation never throws on the picker page.
+// Module-level data for the athlete and cycle in the URL. Switching either is a full
+// navigation, so nothing below needs to be reactive. Falls back to the first athlete so that
+// module evaluation never throws on the picker page.
 const A = athletes[slug ?? slugs[0]];
 export const config = A.config;
-export const plan = A.plan;
-export const sessions = A.sessions.sessions;
-export const context = A.context;
 export const t = stringsFor(config.locale.lang);
+/** Data written before cycles existed: the app can't read it until it's migrated. */
+export const needsUpgrade = (config.schemaVersion ?? 1) < 2 || !A.cycles[config.activeCycle];
+
+/** Every cycle of this athlete, oldest first. */
+export const cycles: Cycle[] = Object.values(A.cycles)
+  .map((c) => c.cycle)
+  .sort((x, y) => x.from.localeCompare(y.from));
+/** The cycle on screen: the one in the URL, or the active one. */
+export const cycle: Cycle = A.cycles[urlCycle]?.cycle ?? A.cycles[config.activeCycle]?.cycle ?? cycles[0];
+export const isActiveCycle = cycle?.id === config.activeCycle;
+/** URL of a cycle: the active one lives at /<slug>. */
+export const cycleUrl = (id: string) => (id === config.activeCycle ? `/${slug}` : `/${slug}/${id}`);
+export const plan: Plan = A.cycles[cycle?.id]?.plan ?? { phases: [], notes: [], weeks: [] };
+export const goal: Goal = cycle?.goal ?? { type: "habit" };
+/** Every activity ever logged, across cycles. The History tab reads these. */
+export const allSessions = A.sessions.sessions;
+/** Activities of the cycle on screen. Everything plan-related reads these. */
+export const sessions = allSessions.filter((s) => s.cycle === cycle?.id);
+export const context = A.context;
 
 // ------------------------------------------------- the plan detail, structured
 
@@ -326,6 +374,9 @@ export function isRun(s: DoneSession): boolean {
   return (s.type ?? "run") === "run";
 }
 
+/** Done runs across every cycle, for the History tab. */
+export const allRuns = allSessions.filter((s) => s.done && isRun(s));
+
 /** Done runs only. The base for charts and volume. */
 export const runs = sessions.filter((s) => s.done && isRun(s));
 
@@ -368,11 +419,12 @@ export function paceNum(km: number, minutes: number): number | null {
 }
 
 /** The date the countdown points at: the race, or the end of the plan. */
-export const goalDate = config.goal.date ?? plan.weeks[plan.weeks.length - 1].to;
+export const goalDate = goal.date ?? plan.weeks[plan.weeks.length - 1]?.to ?? TODAY;
 
 export const currentWeek: Week =
   plan.weeks.find((s) => TODAY >= s.from && TODAY <= s.to) ??
-  (TODAY < plan.weeks[0].from ? plan.weeks[0] : plan.weeks[plan.weeks.length - 1]);
+  // Optional access: data waiting for /strata:upgrade has no plan, and must reach the notice.
+  (TODAY < plan.weeks[0]?.from ? plan.weeks[0] : plan.weeks[plan.weeks.length - 1]);
 
 const mean = (v: number[]) => v.reduce((a, b) => a + b, 0) / v.length;
 

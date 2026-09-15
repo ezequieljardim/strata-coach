@@ -24,6 +24,9 @@ done
 # Never ship build output, caches or anyone's data.
 find "$dest" \( -name __pycache__ -o -name .DS_Store -o -name 'raw' -o -name 'out' \) -prune -exec rm -rf {} +
 mkdir -p "$dest/athletes" && touch "$dest/athletes/.gitkeep"
+# The app version /strata:upgrade compares against: always the plugin's version.
+python3 -c "import json,sys; print(json.dumps({'app': json.load(open(sys.argv[1]))['version']}))" \
+  "$here/.claude-plugin/plugin.json" > "$dest/strata.json"
 
 # Guard: the scaffold must not know any athlete.
 if grep -rIl -i "san felipe\|montevideo\|ezequiel\|840v1\|tibia\|shins\|onsetKm\|1A_8lTx" "$dest" || grep -rIlw -i "eze" "$dest"; then

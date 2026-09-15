@@ -5,7 +5,7 @@ argument-hint: "[command]"
 
 Explain Strata to the user, in the language they're writing in. Short, scannable, no walls of text.
 
-If `$ARGUMENTS` names a command (`start`, `session`, `weekly`, `status`, `help`), explain only that
+If `$ARGUMENTS` names a command (`start`, `session`, `weekly`, `status`, `goal`, `upgrade`, `help`), explain only that
 one: what it does, when to use it, what it asks, what it writes, with one example. Otherwise:
 
 ## 1. Where they are
@@ -13,10 +13,12 @@ one: what it does, when to use it, what it asks, what it writes, with one exampl
 Look at the current folder, read-only:
 - **No `athletes/` folder** → not a Strata repo yet. The next step is `/strata:start` in an empty
   folder (or here, if this is where they want the project).
-- **`athletes/` with folders** → list each athlete (name from `config.json`, goal, current week of
-  their plan) and, per athlete, the most useful next step: a session still marked
-  `pendingReport` → `/strata:session <slug>`; a finished week without review →
-  `/strata:weekly <slug>`; nothing pending → `/strata:status <slug>`.
+- **`athletes/` with folders** → list each athlete (name from `config.json`, the active cycle's
+  goal, current week of its plan) and, per athlete, the most useful next step: data without
+  `config.schemaVersion` 2 or no `strata.json` at the repo root → `/strata:upgrade`; a session
+  still marked `pendingReport` → `/strata:session <slug>`; a finished week without review →
+  `/strata:weekly <slug>`; the plan's last week is over → `/strata:goal new <slug>`; nothing
+  pending → `/strata:status <slug>`.
 
 ## 2. The commands
 
@@ -26,6 +28,8 @@ Look at the current folder, read-only:
 | `/strata:session [slug]` | After every run: loads it (Health Auto Export or by hand), asks what no sensor measures, gives the feedback and saves it |
 | `/strata:weekly [slug]` | End of the week: planned vs actual, easy days, symptoms, recovery → progress, repeat or stop |
 | `/strata:status [slug]` | Anytime, read-only: where you stand and what's pending |
+| `/strata:goal [update\|new] [slug]` | See the goal; adjust it within the same plan (`update`); or close this cycle and start a new goal (`new`), keeping all history |
+| `/strata:upgrade` | After updating the plugin: brings the dashboard app in this repo up to date and migrates the data, with a backup and checks |
 | `/strata:help [command]` | This |
 
 With one athlete the slug can be omitted; with several, commands ask whose it is.

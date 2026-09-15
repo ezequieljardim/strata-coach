@@ -3,7 +3,8 @@
 
     python3 tools/gen-ics.py [--athlete <slug>] [--out file.ics]
 
-One VEVENT per workout with sport == "run", numbered by date. Strength work on the same
+Every cycle's plan goes in, so past cycles stay on the calendar. One VEVENT per workout with
+sport == "run", numbered by date within its cycle. Strength work on the same
 day is appended to the description as "AFTER — ...". Strength-only days get their own
 event. Text is in the athlete's language (config.locale.lang).
 
@@ -14,7 +15,7 @@ config.calendar.uidPrefix of an existing athlete unless you want every event dup
 import argparse, datetime, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from athlete import load, resolve
+from athlete import active_cycle, cycle_ids, load, load_cycle, load_plan, require_schema, resolve
 
 TEXT = {
     "es": dict(prodid="Claude Coach", race="CARRERA", duration="Duracion estimada: %d min",
@@ -49,10 +50,12 @@ def main():
     ap.add_argument("--out")
     args = ap.parse_args()
     a = resolve(args.athlete)
-    cfg, plan = load(a, "config"), load(a, "plan")
+    require_schema(a)
+    cfg = load(a, "config")
     cal = cfg.get("calendar", {})
     T = TEXT.get(cfg["locale"]["lang"][:2], TEXT["en"])
-    goal = cfg["goal"]
+    active = load_cycle(a, active_cycle(a))
+    goal, plan = active["goal"], load_plan(a)
     title = goal.get("name") or cfg["athlete"]["name"]
     prefix = cal.get("uidPrefix", a.slug)
     stamp = cal.get("stamp", "20260101T120000Z")
@@ -79,51 +82,56 @@ def main():
                 'DESCRIPTION:%s' % esc(T["tomorrow"] + summary),
                 'TRIGGER:-PT4H', 'END:VALARM', 'END:VEVENT']
 
-    n = nf = 0
-    for w in plan['weeks']:
-        foot = '— %s %d (%s): %s' % (T["week"], w['n'], w['phase'], w['focus'])
-        for day in w['days']:
-            runs = [x for x in day['workouts'] if x['sport'] == 'run']
-            extra = [x for x in day['workouts'] if x['sport'] == 'strength']
-            if not runs:
-                # Strength-only day: its own event. UID by date, NOT by the counter n, so the
-                # run numbering doesn't shift and duplicate the calendar.
-                for x in extra:
-                    nf += 1
-                    body = ('%s\n\n%s\n\n%s\n\n%s'
-                            % (x['desc'], T["duration"] % x['min'], x['detail'].strip(), foot))
-                    out += vevent('%s-fza-%s' % (prefix, d2(day['date'])), day['date'],
-                                  '💪 %s · %s' % (week_short(T, w['n']), x['name']), body)
-                continue
-            r = runs[0]
-            n += 1
-            f = day['date']
-            is_race = r['type'] == 'race'
-            emoji = '🏆' if is_race else ('🚶' if not r['km'] else '🏃')
-            if is_race:
-                summary = '%s %s: %s' % (emoji, T["race"], title)
-                if goal.get("time"):
-                    summary += ' — %s' % goal["time"]
-            else:
-                summary = '%s %s · %s' % (emoji, week_short(T, w['n']), r['name'])
-                if r['km']:
-                    summary += ' · %s km' % num(r['km'])
+    total = nf = 0
+    for cid in cycle_ids(a):
+        cgoal = load_cycle(a, cid)["goal"]
+        ctitle = cgoal.get("name") or cfg["athlete"]["name"]
+        n = 0  # run numbering restarts per cycle; dates keep UIDs unique across cycles
+        for w in load_plan(a, cid)['weeks']:
+            foot = '— %s %d (%s): %s' % (T["week"], w['n'], w['phase'], w['focus'])
+            for day in w['days']:
+                runs = [x for x in day['workouts'] if x['sport'] == 'run']
+                extra = [x for x in day['workouts'] if x['sport'] == 'strength']
+                if not runs:
+                    # Strength-only day: its own event. UID by date, NOT by the counter n, so the
+                    # run numbering doesn't shift and duplicate the calendar.
+                    for x in extra:
+                        nf += 1
+                        body = ('%s\n\n%s\n\n%s\n\n%s'
+                                % (x['desc'], T["duration"] % x['min'], x['detail'].strip(), foot))
+                        out += vevent('%s-fza-%s' % (prefix, d2(day['date'])), day['date'],
+                                      '💪 %s · %s' % (week_short(T, w['n']), x['name']), body)
+                    continue
+                r = runs[0]
+                n += 1
+                total += 1
+                f = day['date']
+                is_race = r['type'] == 'race'
+                emoji = '🏆' if is_race else ('🚶' if not r['km'] else '🏃')
+                if is_race:
+                    summary = '%s %s: %s' % (emoji, T["race"], ctitle)
+                    if cgoal.get("time"):
+                        summary += ' — %s' % cgoal["time"]
+                else:
+                    summary = '%s %s · %s' % (emoji, week_short(T, w['n']), r['name'])
+                    if r['km']:
+                        summary += ' · %s km' % num(r['km'])
 
-            head = [r['desc'], '', T["duration"] % r['min']]
-            if r['km']:
-                head.append(T["distance"] % num(r['km']))
-            if r['zone']:
-                head.append(T["zone"] % r['zone'])
-            body = '\n'.join(head) + '\n\n' + r['detail'].strip()
-            for x in extra:
-                body += ('\n\n─────────────\n%s — %s\n%s\n\n%s'
-                         % (T["after"], x['name'], x['desc'], x['detail'].strip()))
-            body += '\n\n' + foot
-            out += vevent('%s-%03d-%s' % (prefix, n, f), f, summary, body)
+                head = [r['desc'], '', T["duration"] % r['min']]
+                if r['km']:
+                    head.append(T["distance"] % num(r['km']))
+                if r['zone']:
+                    head.append(T["zone"] % r['zone'])
+                body = '\n'.join(head) + '\n\n' + r['detail'].strip()
+                for x in extra:
+                    body += ('\n\n─────────────\n%s — %s\n%s\n\n%s'
+                             % (T["after"], x['name'], x['desc'], x['detail'].strip()))
+                body += '\n\n' + foot
+                out += vevent('%s-%03d-%s' % (prefix, n, f), f, summary, body)
     out.append('END:VCALENDAR')
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
     open(out_file, 'w', newline='').write('\r\n'.join(out) + '\r\n')
-    print('%d events (%d runs + %d strength) -> %s' % (n + nf, n, nf, os.path.relpath(out_file, a.root)))
+    print('%d events (%d runs + %d strength) -> %s' % (total + nf, total, nf, os.path.relpath(out_file, a.root)))
 
 
 def week_short(T, n):

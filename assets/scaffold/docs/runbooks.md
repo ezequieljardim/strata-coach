@@ -43,7 +43,7 @@ adapter (`tools/hae/` or by hand); what's always missing is the **subjective rep
 
 ## 3. Move a session to another day
 
-`plan.json` is rewritten. **Only with the athlete's approval** (the plan is theirs).
+The active cycle's `plan.json` is rewritten. **Only with the athlete's approval** (the plan is theirs).
 
 1. Move the day's `workouts` to the real day inside `weeks[].days`. Append
    `(moved from <original day>)` to `name` and the why to `desc`.
@@ -78,7 +78,7 @@ athlete who already subscribed.
 python3 tools/validate.py --athlete <slug>
 npx tsc --noEmit && npm run build
 grep -c SITE_PASSWORD dist/assets/*.js        # must be 0
-python3 tools/check-min.py --athlete <slug>   # only if plan.json changed
+python3 tools/check-min.py --athlete <slug>   # only if a plan changed
 ```
 
 Running locally, Claude Code can use git normally. The mounted-folder trap in `CLAUDE.md` applies

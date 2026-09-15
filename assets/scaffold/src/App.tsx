@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ContextPanel, ProgressPanel, RunsPanel, TrackedPanel } from "./panels";
+import { ContextPanel, HistoryPanel, ProgressPanel, RunsPanel, TrackedPanel } from "./panels";
 import { CalendarPanel, NotesPanel } from "./calendar";
 import { ThemePicker } from "./ThemePicker";
 import { useTheme } from "./theme";
-import { config, currentWeek, daysUntil, goalDate, nextSession, plan, slug, t, weekday } from "./lib";
+import { config, currentWeek, cycle, cycles, cycleUrl, daysUntil, goal, goalDate, isActiveCycle, nextSession, plan, slug, t, weekday } from "./lib";
 
 export default function App() {
   const tabs = [
@@ -12,13 +12,14 @@ export default function App() {
     ...config.tracked.map((x) => ({ id: `tracked:${x.id}`, label: x.label })),
     { id: "runs", label: t.tabs.runs },
     { id: "context", label: t.tabs.context },
-    { id: "notes", label: t.tabs.notes },
+    ...(config.zones || plan.notes.length ? [{ id: "notes", label: t.tabs.notes }] : []),
+    { id: "history", label: t.tabs.history },
   ];
   const [tab, setTab] = useState("progress");
   const theme = useTheme();
   const left = daysUntil(goalDate);
   const next = nextSession();
-  const g = config.goal;
+  const g = goal;
   // A race is titled by its name; other goals by what they aim at, so the target isn't repeated below.
   const title = g.name ?? g.target ?? (g.distanceKm ? `${g.distanceKm} km` : config.athlete.name);
   const issue = config.tracked.find((x) => `tracked:${x.id}` === tab);
@@ -41,13 +42,38 @@ export default function App() {
                 .join(" · ")}
             </p>
           </div>
-          <div className="countdown">
-            <span className="n">{left}</span>
-            <span className="l">{t.day(left)}</span>
-          </div>
+          {isActiveCycle ? (
+            <div className="countdown">
+              <span className="n">{left}</span>
+              <span className="l">{t.day(left)}</span>
+            </div>
+          ) : (
+            <div className="countdown past">
+              <span className="n">{cycle.result?.time ?? "✓"}</span>
+              <span className="l">{cycle.result?.summary ?? t.cycleStatus[cycle.status]}</span>
+            </div>
+          )}
         </div>
 
+        {!isActiveCycle && (
+          <p className="pastBanner">
+            {t.viewingPast} <a href={cycleUrl(config.activeCycle)}>{t.backToCurrent}</a>
+          </p>
+        )}
+
         <div className="themeRow">
+          {cycles.length > 1 && (
+            <label className="cyclePick">
+              <span>{t.cycle}</span>
+              <select value={cycle.id} onChange={(e) => (location.href = cycleUrl(e.target.value))}>
+                {cycles.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {(c.goal.name ?? c.goal.target ?? c.id) + " · " + t.cycleStatus[c.status]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <ThemePicker mode={theme.mode} onChange={theme.setMode} t={t} />
         </div>
 
@@ -68,14 +94,16 @@ export default function App() {
               <span className="v">{g.target}</span>
             </div>
           )}
-          <div className="strip wide">
-            <span className="l">{t.nextSession}</span>
-            <span className="v">
-              {next
-                ? `${next.s.date.slice(8)}/${next.s.date.slice(5, 7)} · ${next.s.name}${next.s.km ? ` · ${next.s.km} km` : ""}`
-                : "—"}
-            </span>
-          </div>
+          {isActiveCycle && (
+            <div className="strip wide">
+              <span className="l">{t.nextSession}</span>
+              <span className="v">
+                {next
+                  ? `${next.s.date.slice(8)}/${next.s.date.slice(5, 7)} · ${next.s.name}${next.s.km ? ` · ${next.s.km} km` : ""}`
+                  : "—"}
+              </span>
+            </div>
+          )}
         </div>
 
         <nav>
@@ -94,6 +122,7 @@ export default function App() {
         {tab === "runs" && <RunsPanel />}
         {tab === "context" && <ContextPanel />}
         {tab === "notes" && <NotesPanel />}
+        {tab === "history" && <HistoryPanel />}
       </main>
 
       <footer>
