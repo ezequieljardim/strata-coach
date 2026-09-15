@@ -118,7 +118,9 @@ General endurance reference (MIT, from claude-coach): [zones](reference/claude-c
 
 ## Language
 
-Talk to each athlete in `config.locale.lang` and `tone`. Everything the athlete reads — feedback,
+Infer the language from how the user writes to you, store it in `config.locale.lang`, and talk to
+each athlete in that language and `tone`. The dashboard's labels are Spanish or English only (any
+other language falls back to English). Everything the athlete reads — feedback,
 notes, HANDOFF, plan texts, tracked-issue labels — is in their language. Code, keys, file names and
 repo rules stay in English. Adding a UI language means adding a dictionary to `src/i18n.ts`.
 

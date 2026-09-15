@@ -30,8 +30,13 @@ Check that `git config user.email` is the email of the GitHub account they'll de
 Ask in rounds of 2-4 questions, not a form. Explain briefly why you ask when it isn't obvious.
 Write nothing until the round that needs it is answered. Cover:
 
-1. **Who**: name, a short slug for the URL (`ana`), language for everything they'll read (default:
-   the language of this conversation) and tone (e.g. voseo). Time zone.
+1. **Who**: name, a short slug for the URL (`ana`), and time zone. **Language: infer it from the
+   language the user is writing in** and confirm in one line instead of asking; ask only if the
+   athlete is someone else who may read in another language. Store it as a BCP 47 tag in
+   `locale.lang` (`es-AR`, `en-US`, `pt-BR`…) plus a `tone` when it matters (e.g. voseo).
+   The dashboard's labels exist in Spanish and English; any other language shows them in English
+   — say so when that's the case. Plan texts, notes, HANDOFF and feedback are still written in the
+   athlete's language.
 2. **Goal**: a race (name, date, place, time), reaching a distance (with or without a date), or a
    habit (runs per week, sustainably). Target and, if they want, a stretch goal.
 3. **Where they are today**: current running (longest continuous run in the last 4 weeks, runs per

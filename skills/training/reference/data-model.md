@@ -48,7 +48,7 @@ athletes/<slug>/
   "cadence": { "base": 160, "target": 168, "reference": 175 },   // optional; hides the chart when absent
   "gear": { "shoes": ["Pegasus 41"], "surfaces": ["Park loop"] },
   "tracked": [],                    // see tracked-issues.md
-  "locale": { "tz": "America/Argentina/Buenos_Aires", "lang": "es-AR", "tone": "voseo" },
+  "locale": { "tz": "America/Argentina/Buenos_Aires", "lang": "es-AR", "tone": "voseo" },  // dashboard labels: es* → Spanish, anything else → English
   "ingest": { "mode": "manual" },   // "manual" | "hae" — see ingest.md
   "calendar": { "uidPrefix": "ana" } // never change once the athlete subscribed
 }

@@ -346,9 +346,9 @@ export function fmtDate(f: string): string {
   return `${d}/${m}`;
 }
 
-/** Capitalized weekday in the athlete's language: "Lunes", "Monday". */
+/** Capitalized weekday in the dashboard's language (es or en): "Lunes", "Monday". */
 export function weekday(date: string): string {
-  const w = new Date(date + "T12:00:00").toLocaleDateString(config.locale.lang, { weekday: "long" });
+  const w = new Date(date + "T12:00:00").toLocaleDateString(t.htmlLang, { weekday: "long" });
   return w.charAt(0).toUpperCase() + w.slice(1);
 }
 

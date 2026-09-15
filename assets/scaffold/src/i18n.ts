@@ -202,7 +202,7 @@ const en: Strings = {
 
 const DICTS: Record<string, Strings> = { es, en };
 
-/** "es-UY" → es. Unknown languages fall back to English. */
+/** The dashboard speaks Spanish or English: "es-UY" → es, "en-GB" → en, anything else → en. */
 export function stringsFor(lang: string | undefined): Strings {
   return DICTS[(lang ?? "en").slice(0, 2).toLowerCase()] ?? en;
 }

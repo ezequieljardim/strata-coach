@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import { athleteNames, config, slug, slugs } from "./lib";
+import { athleteNames, config, slug, slugs, t } from "./lib";
 import { stringsFor } from "./i18n";
 import { ThemePicker } from "./ThemePicker";
 import { useTheme } from "./theme";
@@ -40,7 +40,7 @@ if (!slug && onRoot && (slugs.length === 1 || (last && slugs.includes(last)))) {
 } else {
   if (slug) {
     store.set(slug);
-    document.documentElement.lang = config.locale.lang;
+    document.documentElement.lang = t.htmlLang;
     document.title = config.goal.name ? `${config.athlete.name} · ${config.goal.name}` : config.athlete.name;
   }
   createRoot(document.getElementById("root")!).render(
