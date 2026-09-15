@@ -25,13 +25,27 @@ npm install
 Check that `git config user.email` is the email of the GitHub account they'll deploy with (see
 `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/deploy.md`).
 
-## 2. Interview
+## 2. Interview — a wizard, one question at a time
 
-Ask in rounds of 2-4 questions, not a form. Explain briefly why you ask when it isn't obvious.
-Write nothing until the round that needs it is answered. **Every round is asked, not assumed**: if
-the person answering doesn't know (they're setting it up for someone else), say which answers are
-missing, offer to wait or to continue with explicit placeholders, and list those in HANDOFF open
-items — never fill them in silently. Cover:
+**How to ask:**
+- **One question per message**, in plain conversational text, then stop and wait for the answer.
+  No forms, no option pickers or question tools, no tables, no list of everything you'll ask.
+- **Never show the list of topics below.** It's your script, not something to read out.
+- Each step below is a **topic**, and most topics take several single questions: ask them one by
+  one. Start each message with a short marker of the topic, e.g. `Paso 3 de 8 · Dónde estás hoy`,
+  then the question. When a question needs context (why it matters, what the choices mean), one or
+  two sentences before it.
+- **React to the answer before moving on**: confirm what you understood in a few words, and ask a
+  follow-up only if the answer was ambiguous or opens something important (a pain, a constraint).
+  Follow-ups don't advance the counter.
+- If they don't know or don't want to answer, say what that means for the plan, note it, and go to
+  the next step. **Never fill an answer in yourself.** If the person answering isn't the athlete,
+  keep going with what they know and list the rest as open items for the athlete.
+- Offer a sensible default inside the question when there is one ("most people start with 3 days —
+  does that work, or would you rather tell me which days you have?"), but let them answer freely.
+- Write nothing to disk until the step that needs it is answered.
+
+**Steps** (in this order; skip questions an earlier answer already covered):
 
 1. **Who**: name, a short slug for the URL (`ana`), and time zone. **Language: infer it from the
    language the user is writing in** and confirm in one line instead of asking; ask only if the
@@ -79,6 +93,9 @@ items — never fill them in silently. Cover:
      `/strata:session` won't ask). If yes, which pairs and roughly how many km they have.
    - **Surfaces** available (grass, dirt, track, only asphalt) — they shape where each session goes.
 8. **Life load**: typical sleep, work stress, diet changes in progress.
+
+**After the last step**, give a short plain-text summary of what you understood (a few lines,
+not a table) and ask for one confirmation or correction before writing anything.
 
 If the goal isn't realistic for the time available (e.g. a half marathon in 8 weeks from not
 running), say it now, with the why, and offer the realistic version. The decision is theirs.
