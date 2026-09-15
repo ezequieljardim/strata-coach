@@ -40,12 +40,21 @@ Write nothing until the round that needs it is answered. Cover:
 2. **Goal**: a race (name, date, place, time), reaching a distance (with or without a date), or a
    habit (runs per week, sustainably). Target and, if they want, a stretch goal.
 3. **Where they are today**: current running (longest continuous run in the last 4 weeks, runs per
-   week), how long since they last trained regularly, past races or best efforts, age, weight if
-   they want to share it.
+   week), how long since they last trained regularly, past races or best efforts. **Age, height and
+   weight** (weight only if they want to share it): impact load per stride scales with body mass,
+   and height with weight gives a first read on it, so they shape how gradual the base is.
 4. **Body**: current or recurring pain, injuries, what stopped previous attempts, anything a doctor
    told them. If something recurs → design a tracked issue with them
    (`${CLAUDE_PLUGIN_ROOT}/skills/training/reference/tracked-issues.md`). If nothing → `tracked: []`. Don't invent one.
-5. **Schedule**: which days they can run, how long on weekdays vs weekends, constraints.
+5. **Schedule** — availability and preference are different questions, ask both:
+   - **Available**: every day they *could* run, and how much time fits on each (e.g. weekdays
+     45 min before work, Saturday up to 2 h). Fixed constraints: shifts, kids, travel.
+   - **Preferred**: of those, which days they'd rather run, and whether they have a favourite day
+     for the long run (usually the day with the most time) and for quality.
+   Then choose the run days: preferred ones first, adjusted so the rules hold (no back-to-back runs,
+   `hoursBetweenQualityAndLong` between quality and long) and the long run lands where there's time.
+   If preferences break a rule (e.g. Saturday and Sunday), say why and propose the closest option.
+   The other available days are the fallback when a session has to move.
 6. **Data**: watch with HR? max/resting HR known? iPhone + Mac with Health Auto Export, or manual?
    Say the requirements and cost **before** they buy anything (`${CLAUDE_PLUGIN_ROOT}/skills/training/reference/ingest.md`).
 7. **Gear and places**: shoes they'll rotate, surfaces available (grass? track? only asphalt?).

@@ -95,8 +95,16 @@ export type Cycle = {
 export type Config = {
   schemaVersion?: number;
   activeCycle: string;
-  athlete: { name: string };
-  schedule: { days: string[] };
+  athlete: { name: string; age?: number; heightCm?: number; weightKg?: number };
+  schedule: {
+    /** Run days the plan uses. */
+    days: string[];
+    /** Every day they could run → minutes that fit. Fallback days when a session moves. */
+    available?: Record<string, number>;
+    preferred?: string[];
+    longRunDay?: string;
+    notes?: string;
+  };
   rules: { easyDayHrCap?: number; [k: string]: unknown };
   zones?: {
     lthr?: number;

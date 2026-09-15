@@ -62,6 +62,15 @@ def check(a):
             err(f"config: missing '{k}'")
     if "goal" in cfg:
         err("config.goal belongs in cycles/<id>/cycle.json now")
+    DAYS = {"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
+    sch = cfg.get("schedule", {})
+    bad = [d for d in sch.get("days", []) + list(sch.get("available", {})) + sch.get("preferred", []) if d not in DAYS]
+    if bad:
+        err(f"config.schedule: unknown day names {bad} (use mon..sun)")
+    if sch.get("available") and not set(sch.get("days", [])) <= set(sch["available"]):
+        err(f"config.schedule.days {sch.get('days')} includes days not in schedule.available")
+    if sch.get("longRunDay") and sch["longRunDay"] not in sch.get("days", []):
+        err(f"config.schedule.longRunDay {sch['longRunDay']!r} is not one of schedule.days")
     loc = cfg.get("locale", {})
     if not loc.get("tz") or not loc.get("lang"):
         err("config.locale needs tz and lang")

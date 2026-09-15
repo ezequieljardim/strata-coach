@@ -29,8 +29,16 @@ brought up with `python3 tools/migrate.py` (run by `/strata:upgrade`).
 {
   "schemaVersion": 2,
   "activeCycle": "2027-media-bsas",
-  "athlete": { "name": "Ana" },
-  "schedule": { "days": ["tue", "thu", "sat"] },
+  "athlete": { "name": "Ana", "age": 34, "heightCm": 165, "weightKg": 61 },   // age/height/weight optional
+  "schedule": {
+    "days": ["tue", "thu", "sat"],                 // the run days the plan uses
+    "available": {                                 // every day they could run → minutes that fit
+      "mon": 45, "tue": 45, "wed": 30, "thu": 45, "sat": 120, "sun": 90
+    },
+    "preferred": ["tue", "thu", "sat"],            // what they'd rather do, before rules adjust it
+    "longRunDay": "sat",                           // optional
+    "notes": "Wednesdays only after 20:00"         // optional, constraints in their words
+  },
   "rules": {
     "noBackToBackRunDays": true,
     "hoursBetweenQualityAndLong": 48,

@@ -45,7 +45,8 @@ adapter (`tools/hae/` or by hand); what's always missing is the **subjective rep
 
 The active cycle's `plan.json` is rewritten. **Only with the athlete's approval** (the plan is theirs).
 
-1. Move the day's `workouts` to the real day inside `weeks[].days`. Append
+1. Pick the new day from `config.schedule.available` (and the minutes that fit there) before
+   anything else. Move the day's `workouts` to the real day inside `weeks[].days`. Append
    `(moved from <original day>)` to `name` and the why to `desc`.
 2. Leave the original day with no run workout (rest).
 3. **If it crosses a week boundary**, set `week` in `sessions.json` by **where the day falls**,
