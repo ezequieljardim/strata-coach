@@ -115,6 +115,15 @@ scripts/pull-scaffold.sh    refresh the scaffold from a working instance
 
 Not medical advice. Symptoms are tracked to bring a clear record to a doctor, never to diagnose.
 
+## Maintaining
+
+- Refresh the dashboard scaffold from a working instance: `scripts/pull-scaffold.sh <instance-repo>`.
+  It refuses to copy anything athlete-specific.
+- **Bump `version` in `.claude-plugin/plugin.json` with every change you want users to get.**
+  `claude plugin update` compares versions: without a bump it reports "already at the latest
+  version" and keeps the old copy.
+- `claude plugin validate .` before committing.
+
 ## License
 
 MIT. `skills/training/reference/claude-coach/` keeps its own MIT license and copyright notice.
