@@ -368,7 +368,7 @@ export function RunsPanel() {
                 <th className="n">{t.runCols.avgHr}</th>
                 <th className="n">{t.runCols.maxHr}</th>
                 <th className="n">{t.runCols.cad}</th>
-                <th>{t.runCols.shoes}</th>
+                {config.gear?.trackShoes !== false && <th>{t.runCols.shoes}</th>}
                 <th className="n">{t.runCols.rpe}</th>
                 <th></th>
               </tr>
@@ -384,7 +384,7 @@ export function RunsPanel() {
                   <td className="n">{s.avgHr ?? "—"}</td>
                   <td className="n">{s.maxHr ?? "—"}</td>
                   <td className="n">{s.cadence ?? "—"}</td>
-                  <td>{s.shoes ?? "—"}</td>
+                  {config.gear?.trackShoes !== false && <td>{s.shoes ?? "—"}</td>}
                   <td className="n">{s.rpe ?? "—"}</td>
                   <td>
                     {planDay(s.date) && (

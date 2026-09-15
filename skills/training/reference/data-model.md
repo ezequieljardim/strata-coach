@@ -37,7 +37,8 @@ brought up with `python3 tools/migrate.py` (run by `/strata:upgrade`).
     },
     "preferred": ["tue", "thu", "sat"],            // what they'd rather do, before rules adjust it
     "longRunDay": "sat",                           // optional
-    "notes": "Wednesdays only after 20:00"         // optional, constraints in their words
+    "notes": "Wednesdays only after 20:00",        // optional, constraints in their words
+    "otherTraining": [{ "what": "Freeletics", "days": ["mon", "wed", "fri"], "intensity": "moderate" }]  // optional
   },
   "rules": {
     "noBackToBackRunDays": true,
@@ -54,10 +55,10 @@ brought up with `python3 tools/migrate.py` (run by `/strata:upgrade`).
     "pace": [{ "zone": 1, "name": "Recovery", "pace": "7:30-8:00/km", "feel": "Could sing" }]
   },
   "cadence": { "base": 160, "target": 168, "reference": 175 },   // optional; hides the chart when absent
-  "gear": { "shoes": ["Pegasus 41"], "surfaces": ["Park loop"] },
+  "gear": { "trackShoes": true, "shoes": ["Pegasus 41"], "surfaces": ["Park loop"] },  // trackShoes false: not asked, not shown
   "tracked": [],                    // see tracked-issues.md
   "locale": { "tz": "America/Argentina/Buenos_Aires", "lang": "es-AR", "tone": "voseo" },  // dashboard labels: es* → Spanish, anything else → English
-  "ingest": { "mode": "manual" },   // "manual" | "hae" — see ingest.md
+  "ingest": { "mode": "manual", "source": "Garmin Forerunner 55 + Connect app" },   // mode "manual" | "hae" — see ingest.md
   "calendar": { "uidPrefix": "ana" } // never change once the athlete subscribed
 }
 ```

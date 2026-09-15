@@ -17,6 +17,10 @@ dashboard tab, a question in `/session`, and a traffic light.
 
    `goodDirection` says which way is improvement (`up` for onset distance, `down` for severity).
    A `baseline` draws the starting point on the chart.
+   Name things so they read well on the dashboard: `label` is the tab (the body part or symptom:
+   "Rodilla", "Tibias"), `chart.title` says what's measured ("Dolor de rodilla: cuándo aparece",
+   not a question like "¿Aparece la rodilla?"), and `keyMetric.label` is the series name
+   ("Minuto de aparición").
 3. **Pick the few fields worth recording** every time: severity 0-10, side, exact location,
    minutes until it clears. Fewer is better; each field is a question after every run.
 4. **Write the traffic light** in plain words:
@@ -52,11 +56,11 @@ dashboard tab, a question in `/session`, and a traffic light.
   "id": "knee",
   "label": "Rodilla",
   "keyMetric": {
-    "field": "onsetMin", "unit": "min", "label": "Aparece a los",
+    "field": "onsetMin", "unit": "min", "label": "Minuto de aparición",
     "goodDirection": "up", "baseline": { "value": 20, "label": "punto de partida (20 min)" }
   },
   "chart": {
-    "title": "¿Cuándo aparece?",
+    "title": "Dolor de rodilla: cuándo aparece",
     "subtitle": "Si aparece cada vez más tarde con más carga, es adaptación. Si queda fija, hay que consultar."
   },
   "fields": [

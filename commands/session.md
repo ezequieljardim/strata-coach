@@ -30,7 +30,7 @@ the JSON (notes, feedback) is in that language too.
    - one question per `config.tracked[]` issue, built from its `fields[].prompt` (skip the whole
      group with a single "did X show up?" when it didn't);
    - perceived effort (RPE 1-10);
-   - shoes (`config.gear.shoes`) and surface.
+   - shoes (`config.gear.shoes`) — only if `gear.trackShoes` isn't `false` — and surface.
 4. Fill the entry and **delete `pendingReport`**. The long analysis goes in `notes` — that's where
    every detail belongs: it is the record for the doctor and for the athlete a month from now.
 5. Give the feedback **with the template below**. The full analysis stays in `notes`.

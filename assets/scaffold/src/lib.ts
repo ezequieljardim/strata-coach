@@ -114,6 +114,8 @@ export type Config = {
     pace: { zone: number; name: string; pace: string; feel: string }[];
   };
   cadence?: { base: number; target: number; reference?: number };
+  /** trackShoes false: shoes aren't asked after runs nor shown in the runs table. */
+  gear?: { shoes?: string[]; surfaces?: string[]; trackShoes?: boolean };
   tracked: TrackedIssue[];
   locale: { tz: string; lang: string; tone?: string };
 };

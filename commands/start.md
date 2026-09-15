@@ -28,7 +28,10 @@ Check that `git config user.email` is the email of the GitHub account they'll de
 ## 2. Interview
 
 Ask in rounds of 2-4 questions, not a form. Explain briefly why you ask when it isn't obvious.
-Write nothing until the round that needs it is answered. Cover:
+Write nothing until the round that needs it is answered. **Every round is asked, not assumed**: if
+the person answering doesn't know (they're setting it up for someone else), say which answers are
+missing, offer to wait or to continue with explicit placeholders, and list those in HANDOFF open
+items — never fill them in silently. Cover:
 
 1. **Who**: name, a short slug for the URL (`ana`), and time zone. **Language: infer it from the
    language the user is writing in** and confirm in one line instead of asking; ask only if the
@@ -55,9 +58,26 @@ Write nothing until the round that needs it is answered. Cover:
    `hoursBetweenQualityAndLong` between quality and long) and the long run lands where there's time.
    If preferences break a rule (e.g. Saturday and Sunday), say why and propose the closest option.
    The other available days are the fallback when a session has to move.
-6. **Data**: watch with HR? max/resting HR known? iPhone + Mac with Health Auto Export, or manual?
-   Say the requirements and cost **before** they buy anything (`${CLAUDE_PLUGIN_ROOT}/skills/training/reference/ingest.md`).
-7. **Gear and places**: shoes they'll rotate, surfaces available (grass? track? only asphalt?).
+   - **Other training**: gym, strength apps, football, cycling, classes — which days and how hard.
+     It counts as load: never on the day before quality or long, and not the same day as a run
+     unless it's light. Record it in `schedule.otherTraining`.
+6. **How runs will be measured** — ask what they have, then say what that enables:
+   - **Device**: sports watch (which one, with wrist HR?), phone with GPS app (Strava, Nike Run
+     Club, Garmin Connect, Apple Fitness…), just a stopwatch, nothing.
+   - **What it enables**, and ask which to turn on:
+     - HR → an easy-day cap (`rules.easyDayHrCap`) on the watch and in the feedback; without HR,
+       easy is controlled by the talk test and RPE.
+     - GPS distance and pace → pace ranges in the plan; without it, everything by time.
+     - Cadence → only if it will be trained.
+     - iPhone + Apple Watch + Mac → automatic import with Health Auto Export (say requirements and
+       cost first, `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/ingest.md`); otherwise manual: after each run they tell `/strata:session`
+       the numbers their app shows.
+   - Record the answer in `ingest` (`mode` plus `source`, e.g. "Garmin Forerunner 55 + Connect").
+7. **Gear and places**:
+   - **Shoes**: do they want to log which pair they use each run? Worth it when they rotate pairs
+     or a pain might relate to shoes; skip it otherwise (`gear.trackShoes: false`, and
+     `/strata:session` won't ask). If yes, which pairs and roughly how many km they have.
+   - **Surfaces** available (grass, dirt, track, only asphalt) — they shape where each session goes.
 8. **Life load**: typical sleep, work stress, diet changes in progress.
 
 If the goal isn't realistic for the time available (e.g. a half marathon in 8 weeks from not
