@@ -3,7 +3,7 @@ import { ContextPanel, HistoryPanel, ProgressPanel, RunsPanel, TrackedPanel } fr
 import { CalendarPanel, NotesPanel } from "./calendar";
 import { ThemePicker } from "./ThemePicker";
 import { useTheme } from "./theme";
-import { config, currentWeek, cycle, cycles, cycleUrl, daysUntil, goal, goalDate, isActiveCycle, nextSession, plan, slug, t, weekday } from "./lib";
+import { athleteNames, config, currentWeek, cycle, cycles, cycleUrl, slugs, daysUntil, goal, goalDate, isActiveCycle, nextSession, plan, slug, t, weekday } from "./lib";
 
 export default function App() {
   const tabs = [
@@ -62,6 +62,16 @@ export default function App() {
         )}
 
         <div className="themeRow">
+          {slugs.length > 1 && (
+            <label className="cyclePick">
+              <span>{t.athlete}</span>
+              <select value={slug!} onChange={(e) => (location.href = `/${e.target.value}`)}>
+                {slugs.map((s) => (
+                  <option key={s} value={s}>{athleteNames[s]}</option>
+                ))}
+              </select>
+            </label>
+          )}
           {cycles.length > 1 && (
             <label className="cyclePick">
               <span>{t.cycle}</span>

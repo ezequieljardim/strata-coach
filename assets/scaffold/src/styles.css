@@ -426,7 +426,8 @@ td.wrap { white-space: normal; min-width: 220px; }
 
 /* Cycles: picker next to the theme switch, and a banner when looking at a past one. */
 .themeRow { gap: 10px; align-items: center; }
-.cyclePick { display: inline-flex; align-items: center; gap: 8px; margin-right: auto; font-size: 12px; color: var(--muted); }
+.cyclePick { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.themeRow .themePick { margin-left: auto; }
 .cyclePick select { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
   padding: 5px 10px; font: inherit; font-size: 12.5px; }
 .pastBanner { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--sunken);

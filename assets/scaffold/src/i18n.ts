@@ -17,6 +17,7 @@ const es = {
   tabs: { progress: "Progreso", calendar: "Calendario", runs: "Corridas", context: "Contexto", notes: "Notas", history: "Historia" },
 
   // cycles and history
+  athlete: "Atleta",
   cycle: "Ciclo",
   cycleStatus: { active: "en curso", completed: "completado", abandoned: "abandonado" } as Record<string, string>,
   finished: "terminado",
@@ -137,6 +138,7 @@ const en: Strings = {
   nextSession: "Next session",
   tabs: { progress: "Progress", calendar: "Calendar", runs: "Runs", context: "Context", notes: "Notes", history: "History" },
 
+  athlete: "Athlete",
   cycle: "Cycle",
   cycleStatus: { active: "in progress", completed: "completed", abandoned: "abandoned" },
   finished: "finished",
