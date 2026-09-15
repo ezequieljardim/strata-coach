@@ -1,9 +1,18 @@
 {
-  "name": "running-coach",
-  "displayName": "Running Coach",
+  "name": "strata",
+  "displayName": "Strata",
   "version": "0.1.0",
-  "description": "Coach one or more runners with Claude: an interview builds a personal plan, /session loads each run and gives feedback, and a password-protected dashboard per athlete deploys to Vercel.",
-  "author": { "name": "Ezequiel Jardim" },
+  "description": "A running coach that builds you up in layers: an interview writes a personal plan, /strata:session loads each run and gives feedback, and each athlete gets a password-protected dashboard that deploys to Vercel.",
+  "author": {
+    "name": "Ezequiel Jardim"
+  },
   "license": "MIT",
-  "keywords": ["running", "training-plan", "coaching", "dashboard", "vercel"]
+  "keywords": [
+    "running",
+    "training-plan",
+    "coaching",
+    "dashboard",
+    "vercel"
+  ],
+  "repository": "https://github.com/ezequieljardim/strata-coach"
 }

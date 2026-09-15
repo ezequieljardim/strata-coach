@@ -1,5 +1,5 @@
 ---
-description: Set up a running-coach repo, or add a new athlete to one — interview, plan, dashboard
+description: Set up a Strata repo, or add a new athlete to one — interview, plan, dashboard
 argument-hint: "[athlete name]"
 ---
 
@@ -106,5 +106,5 @@ connect it to their Vercel project. Several people in one household can share on
 password; unrelated people each get their own.
 
 Commit with only the new athlete's folder (plus the scaffold on a first setup). Tell them the next
-steps: `/running-coach:session <slug>` after each run, `/running-coach:weekly <slug>` at the end of
+steps: `/strata:session <slug>` after each run, `/strata:weekly <slug>` at the end of
 each week, and `tools/export.sh --athlete <slug>` for backups.

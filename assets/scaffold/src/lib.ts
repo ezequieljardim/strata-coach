@@ -174,7 +174,7 @@ for (const [path, data] of Object.entries(files)) {
 export const slugs = Object.keys(athletes).sort();
 if (!slugs.length) {
   // A fresh scaffold before the first athlete: say what to do instead of a blank page.
-  document.getElementById("root")!.textContent = "No athletes yet — run /running-coach:start to add one.";
+  document.getElementById("root")!.textContent = "No athletes yet — run /strata:start to add one.";
   throw new Error("no athletes under /athletes");
 }
 export const athleteNames = Object.fromEntries(slugs.map((s) => [s, athletes[s].config.athlete.name]));

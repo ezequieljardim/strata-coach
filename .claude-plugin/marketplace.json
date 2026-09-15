@@ -1,12 +1,12 @@
 {
-  "name": "running-coach",
+  "name": "strata",
   "owner": {
     "name": "Ezequiel Jardim"
   },
-  "description": "Running Coach plugin: personal running plans, per-session feedback and a dashboard per athlete.",
+  "description": "Strata: personal running plans built in layers, per-session feedback and a dashboard per athlete.",
   "plugins": [
     {
-      "name": "running-coach",
+      "name": "strata",
       "source": "./",
       "description": "Personal running plans, per-session feedback and a dashboard per athlete."
     }

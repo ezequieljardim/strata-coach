@@ -1,6 +1,6 @@
-# Running Coach — a Claude Code plugin
+# Strata — a running coach for Claude Code
 
-Coach one or more runners with Claude. An interview builds a personal plan (a race, a distance, or
+Coach one or more runners with Claude. Fitness is built the way strata form: thin layers, laid down week after week, that harden into something that holds. An interview builds a personal plan (a race, a distance, or
 a habit), `/session` loads every run and gives structured feedback, and each athlete gets a
 password-protected dashboard at `/<slug>` that deploys to Vercel.
 
@@ -12,8 +12,8 @@ thing: **the coach brakes more than it pushes**.
 In Claude Code:
 
 ```
-/plugin marketplace add ezequieljardim/running-coach
-/plugin install running-coach@running-coach
+/plugin marketplace add ezequieljardim/strata-coach
+/plugin install strata@strata
 ```
 
 ## Use
@@ -21,7 +21,7 @@ In Claude Code:
 In an empty folder:
 
 ```
-/running-coach:start
+/strata:start
 ```
 
 It creates the project, interviews you (or whoever the plan is for), writes the plan week by week,
@@ -29,10 +29,10 @@ and opens the dashboard locally. Run it again in the same folder to add another 
 
 | Command | When |
 |---|---|
-| `/running-coach:start [name]` | new project or new athlete |
-| `/running-coach:session [slug]` | after each run: load it and get feedback |
-| `/running-coach:weekly [slug]` | end of the week: progress, repeat or stop |
-| `/running-coach:status [slug]` | read-only: where do I stand |
+| `/strata:start [name]` | new project or new athlete |
+| `/strata:session [slug]` | after each run: load it and get feedback |
+| `/strata:weekly [slug]` | end of the week: progress, repeat or stop |
+| `/strata:status [slug]` | read-only: where do I stand |
 
 ## What the dashboard shows
 

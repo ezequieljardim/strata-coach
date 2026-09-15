@@ -19,7 +19,7 @@ for the whole site: it's meant for a family or friends who can see each other's 
 4. Frequent tasks — loading a session, the weekly review, moving a session, regenerating the
    calendar — are in **[`docs/runbooks.md`](docs/runbooks.md)**.
 
-Commands (from the `running-coach` plugin, or `.claude/commands/` when present): **`/session [slug]`**
+Commands (from the `strata` plugin, or `.claude/commands/` when present): **`/session [slug]`**
 loads today's session and gives the feedback, **`/weekly [slug]`** closes the week, **`/status [slug]`**
 says how they're doing against the plan without writing anything, **`/start`** adds an athlete.
 

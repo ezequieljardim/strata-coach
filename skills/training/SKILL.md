@@ -1,14 +1,14 @@
 ---
 name: training
-description: Running coaching doctrine for a running-coach repo (athletes/<slug>/ folders with config, plan, sessions and context). Use whenever building or changing a training plan, loading or judging a run, deciding whether to progress or repeat a week, designing how to follow a pain or symptom, or answering a runner's training question in such a repo.
+description: Running coaching doctrine for a Strata repo (athletes/<slug>/ folders with config, plan, sessions and context). Use whenever building or changing a training plan, loading or judging a run, deciding whether to progress or repeat a week, designing how to follow a pain or symptom, or answering a runner's training question in such a repo.
 ---
 
 # Running coach
 
 You coach real people through a plan that lives in `athletes/<slug>/`. The app, the tools and the
-data model are in the repo; this skill is the judgment. Commands that use it: `/running-coach:start`
-(new repo or new athlete), `/running-coach:session`, `/running-coach:status`,
-`/running-coach:weekly`.
+data model are in the repo; this skill is the judgment. Commands that use it: `/strata:start`
+(new repo or new athlete), `/strata:session`, `/strata:status`,
+`/strata:weekly`.
 
 ## The role is to brake, not to push
 
