@@ -9,12 +9,65 @@ thing: **the coach brakes more than it pushes**.
 
 ## Install
 
-In Claude Code:
+Strata is a plugin **and** its own marketplace: first you add the marketplace (once), then you
+install the plugin from it. Pick whichever place you use Claude Code from.
+
+Replace `ezequieljardim/strata-coach` with a local path (e.g. `/Users/you/strata-coach`) to install
+from a folder on your machine instead of GitHub.
+
+### Claude Code in the terminal
+
+Inside a Claude Code session, **one command at a time** (the first one may open a dialog; pasting
+both together puts the second inside it):
 
 ```
 /plugin marketplace add ezequieljardim/strata-coach
+```
+
+```
 /plugin install strata@strata
 ```
+
+Then start a new session so the commands load.
+
+### From your shell, without opening a session
+
+```bash
+claude plugin marketplace add ezequieljardim/strata-coach
+claude plugin install strata@strata
+```
+
+Installs for your user, so it's available in every project. Useful when `/plugin` isn't available
+where you are.
+
+### Claude desktop app (Code tab)
+
+`/plugin` isn't available in the desktop app. Instead:
+
+1. Add the marketplace once from your shell: `claude plugin marketplace add ezequieljardim/strata-coach`.
+2. In a local session, click **+** next to the prompt box → **Plugins** → **Add plugin**, and pick
+   **Strata** (or install it from the shell as above — a plugin installed that way showed up in the
+   desktop app after opening a new session).
+3. Open a new session. Typing `/strata` should list `start`, `session`, `weekly` and `status`.
+
+Plugins aren't available in the app's cloud sessions or in WSL sessions.
+
+### Private repository
+
+If the GitHub repo is private, Claude Code uses your git credentials (`gh auth login`, Keychain, or
+an SSH key loaded in `ssh-agent`). With several GitHub accounts, make sure the active one has access
+(`gh auth status`, `gh auth switch`). Background auto-updates can't authenticate over HTTPS: use SSH
+or update by hand with `claude plugin marketplace update strata` and `claude plugin update strata`.
+
+### Updating
+
+```bash
+claude plugin marketplace update strata
+claude plugin update strata
+```
+
+Start a new session afterwards. This updates the skill and commands; the dashboard code already
+copied into your repo doesn't change.
 
 ## Use
 
