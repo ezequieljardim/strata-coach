@@ -1,7 +1,7 @@
 {
   "name": "strata",
   "displayName": "Strata",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A running coach that builds you up in layers: an interview writes a personal plan, /strata:session loads each run and gives feedback, and each athlete gets a password-protected dashboard that deploys to Vercel.",
   "author": {
     "name": "Ezequiel Jardim"

@@ -15,7 +15,15 @@ export default function App() {
     ...(config.zones || plan.notes.length ? [{ id: "notes", label: t.tabs.notes }] : []),
     { id: "history", label: t.tabs.history },
   ];
-  const [tab, setTab] = useState("progress");
+  // The tab lives in the URL hash (/<slug>#runs) so a tab can be linked and survives a reload.
+  const [tab, setTabState] = useState(() => {
+    const h = decodeURIComponent(location.hash.slice(1));
+    return tabs.some((x) => x.id === h) ? h : "progress";
+  });
+  const setTab = (id: string) => {
+    setTabState(id);
+    history.replaceState(null, "", id === "progress" ? location.pathname : `#${id}`);
+  };
   const theme = useTheme();
   const left = daysUntil(goalDate);
   const next = nextSession();

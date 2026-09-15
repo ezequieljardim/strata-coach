@@ -7,6 +7,21 @@ password-protected dashboard at `/<slug>` that deploys to Vercel.
 It came out of a real 14-week comeback plan with a recurring injury, so it's opinionated about one
 thing: **the coach brakes more than it pushes**.
 
+## Screenshots
+
+*Demo athlete with synthetic data.*
+
+![Plan progress and weekly volume](docs/screenshots/progress.png)
+
+| | |
+|---|---|
+| ![Day detail with the coach's feedback](docs/screenshots/day-detail.png) | ![A tracked symptom week over week](docs/screenshots/knee.png) |
+| **Day detail** — the prescription, what was done, and the feedback | **Tracked symptom** — when it shows up, week over week |
+| ![Cadence and heart rate, dark theme](docs/screenshots/runs-dark.png) | ![Sleep, weight and resting HR](docs/screenshots/context.png) |
+| **Runs** — cadence and HR against the easy-day cap (dark theme) | **Context** — sleep, weight, resting HR |
+
+![History across goals](docs/screenshots/history.png)
+
 ## Install
 
 Strata is a plugin **and** its own marketplace: first you add the marketplace (once), then you
