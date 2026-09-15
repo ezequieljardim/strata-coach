@@ -110,7 +110,8 @@ when there's more than one athlete.
 - Claude Code, Node 20+, Python 3, git.
 - Optional: a Vercel account (Hobby is enough) and a GitHub repo to publish the dashboard.
 - Optional: iPhone + Apple Watch + Mac with Health Auto Export Premium for automatic data. Without
-  it, `/session` asks for the numbers — a minute per run. Strava is not supported (its API needs a
+  it — and on Android, where automatic import isn't supported yet (see `ROADMAP.md`) — `/session`
+  asks for the numbers, a minute per run. Strava is not supported (its API needs a
   paid subscription per athlete; see `skills/training/reference/ingest.md`).
 
 ## What's inside

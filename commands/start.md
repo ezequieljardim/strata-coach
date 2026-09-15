@@ -75,7 +75,15 @@ Check that `git config user.email` is the email of the GitHub account they'll de
    - **Other training**: gym, strength apps, football, cycling, classes — which days and how hard.
      It counts as load: never on the day before quality or long, and not the same day as a run
      unless it's light. Record it in `schedule.otherTraining`.
-6. **How runs will be measured** — ask what they have, then say what that enables:
+6. **How runs will be measured** — first ask: **iPhone or Android?**
+   - **Android**: say plainly that automatic import from Android (Health Connect) **isn't supported
+     yet** — it's on the roadmap — and that for now runs are loaded by hand: after each run they
+     tell `/strata:session` the numbers their watch or app shows. Set `ingest.mode: "manual"`,
+     `ingest.platform: "android"`, skip the Health Auto Export option below, and continue with the
+     device questions (the watch still decides HR caps and pace ranges).
+   - **iPhone**: continue as below (`ingest.platform: "ios"`).
+
+   Then ask what they have, and say what that enables:
    - **Device**: sports watch (which one, with wrist HR?), phone with GPS app (Strava, Nike Run
      Club, Garmin Connect, Apple Fitness…), just a stopwatch, nothing.
    - **What it enables**, and ask which to turn on:
@@ -83,7 +91,7 @@ Check that `git config user.email` is the email of the GitHub account they'll de
        easy is controlled by the talk test and RPE.
      - GPS distance and pace → pace ranges in the plan; without it, everything by time.
      - Cadence → only if it will be trained.
-     - iPhone + Apple Watch + Mac → automatic import with Health Auto Export (say requirements and
+     - iPhone + Apple Watch + Mac (iOS only) → automatic import with Health Auto Export (say requirements and
        cost first, `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/ingest.md`); otherwise manual: after each run they tell `/strata:session`
        the numbers their app shows.
    - Record the answer in `ingest` (`mode` plus `source`, e.g. "Garmin Forerunner 55 + Connect").

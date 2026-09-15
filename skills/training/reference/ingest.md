@@ -29,6 +29,13 @@ Per-athlete calibration in `ingest.hae`: `cadenceOffset`, `jogPaceMaxMinPerKm`, 
 `hrTolerance`. Defaults come from one athlete's validation; for a new athlete, compare the first
 two or three runs against what they report and adjust **before** history accumulates.
 
+## Android — not supported yet
+
+There's no automatic import from Android. Health Connect (Android's health store) can export on a
+schedule, and apps can write daily JSON to Google Drive, but no adapter reads them yet — it's on
+the roadmap (`ROADMAP.md` in the plugin). Android athletes use `manual`; set
+`ingest.platform: "android"` so it's clear later.
+
 ## Strava — not supported
 
 Checked on developers.strava.com (14/09/2026): **a paid Strava subscription is required to create

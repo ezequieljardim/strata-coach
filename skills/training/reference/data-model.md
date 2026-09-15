@@ -58,7 +58,7 @@ brought up with `python3 tools/migrate.py` (run by `/strata:upgrade`).
   "gear": { "trackShoes": true, "shoes": ["Pegasus 41"], "surfaces": ["Park loop"] },  // trackShoes false: not asked, not shown
   "tracked": [],                    // see tracked-issues.md
   "locale": { "tz": "America/Argentina/Buenos_Aires", "lang": "es-AR", "tone": "voseo" },  // dashboard labels: es* → Spanish, anything else → English
-  "ingest": { "mode": "manual", "source": "Garmin Forerunner 55 + Connect app" },   // mode "manual" | "hae" — see ingest.md
+  "ingest": { "mode": "manual", "platform": "android", "source": "Garmin Forerunner 55 + Connect app" },  // platform "ios" | "android"   // mode "manual" | "hae" — see ingest.md
   "calendar": { "uidPrefix": "ana" } // never change once the athlete subscribed
 }
 ```
