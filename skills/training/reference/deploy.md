@@ -9,6 +9,12 @@ npm run dev            # http://localhost:5173 → the only athlete, or a picker
 
 ## Vercel
 
+Hobby is free and meant for personal, non-commercial use (checked 15/09/2026) — enough for this.
+The expected setup is a **private GitHub repo owned by the athlete** (or the household) imported as
+a Vercel project: every push to `main` redeploys. Vercel only lets a personal-account repo's
+**owner** connect it, so a collaborator on someone else's repo can't publish it. `vercel deploy
+--prod` without GitHub works too, but then logging a run doesn't redeploy anything.
+
 ```bash
 npm i -g vercel
 vercel link            # or `vercel` the first time to create the project

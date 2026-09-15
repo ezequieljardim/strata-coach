@@ -112,6 +112,66 @@ and opens the dashboard locally. Run it again in the same folder to add another 
 | `/strata:upgrade` | after updating the plugin: update the app in your repo and migrate its data |
 | `/strata:help [command]` | what's available and what to run next |
 
+## Publishing your dashboard (optional)
+
+Everything works locally first: `/strata:start` leaves the project in a folder on your machine and
+the dashboard at `http://localhost:5173/<slug>`. Putting it online is optional, and lets you open it
+from your phone. At the end of `/strata:start` you'll be asked whether you want it online; say yes
+and it walks you through the steps below.
+
+### The flow
+
+```
+/strata:start          →  local folder + dashboard on localhost
+       ↓
+private GitHub repo    →  your plans and health data, versioned and backed up
+       ↓
+Vercel project         →  deploys the repo; every push redeploys
+       ↓
+SITE_PASSWORD          →  the site asks for a password before anything loads
+       ↓
+/strata:session        →  commits and pushes each run → the dashboard updates itself
+```
+
+### What you need
+
+- A **GitHub account** and a **private** repo that **you own**. It holds health data: never make it
+  public. Vercel only connects personal-account repos to their owner, so each person or household
+  has their own.
+- A **Vercel account on the Hobby plan**: free, for personal non-commercial use, plenty for this.
+- Git's `user.email` in the repo set to an email of that GitHub account. A work email in the global
+  git config is the usual reason deploys are rejected.
+
+### Steps
+
+1. **Create the private repo and push**
+   ```bash
+   gh repo create <name> --private --source . --push
+   ```
+2. **Import it in Vercel**: vercel.com → Add New → Project → pick the repo. Framework and build
+   settings come from `vercel.json`: nothing to change.
+3. **Set the password before the first production deploy**: Project → Settings → Environment
+   Variables → `SITE_PASSWORD` (and optionally `SITE_USER`, default `coach`), for Production and
+   Preview. Redeploy.
+4. **Check it's locked**
+   ```bash
+   curl -s -o /dev/null -w '%{http_code}\n' https://<your-project>.vercel.app/
+   ```
+   It must print `401`.
+5. On your phone, open the site, log in once (it remembers you for a year), and add it to the home
+   screen.
+
+### Good to know
+
+- **Why a password of our own:** on Hobby, Vercel's built-in protection doesn't cover the production
+  URL, so the included `middleware.ts` does it. **Without `SITE_PASSWORD` the site is open** — on
+  purpose, so a half-done setup doesn't lock you out — so set it before sharing the link.
+- **One password per site**: everyone with it sees every athlete in that repo. Fine for a household;
+  unrelated people should each have their own repo and project.
+- **Without GitHub:** `vercel deploy --prod` from the folder also works, but nothing redeploys when
+  you log a run: you'd deploy by hand each time.
+- **Updating the app later:** `/strata:upgrade` commits the new version; pushing redeploys.
+
 ## What the dashboard shows
 
 Per athlete, at `/<slug>`: plan progress and weekly volume, a calendar with every day's full

@@ -137,19 +137,39 @@ the calendar shows their days, and there's no tracked tab when `tracked` is empt
 through the first two weeks and **get an explicit OK on the plan**: from here on it only changes
 with their approval.
 
-## 5. Publish (when they want the dashboard online)
+## 5. Publish — ask, then walk through it
 
-Follow `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/deploy.md`. **Before the first production deploy** the Vercel project must have
-`SITE_PASSWORD` (and optionally `SITE_USER`) for Production and Preview — it's health data. After
-deploying, check `/` returns 401 without credentials. Adding an athlete to an existing deploy is
-just a commit and push; remind them everyone with the site password sees every athlete.
+Once the plan is approved and the dashboard runs locally, ask **one question**, wizard style:
+do they want the dashboard online (to open it from their phone)? Explain in one sentence what it
+takes: a private GitHub repo they own, a free Vercel account, and a password. If no, skip to the
+closing message; they can ask for it later. If yes, go step by step, one step per message, waiting
+for each to be done:
 
-**Where the data lives.** The project folder is the athlete's (or the household's) own repo: their
-plans and health data, plus a copy of the app. It belongs in a **private** GitHub repository owned
-by them — not in the plugin's repo, and not in someone else's. On a first setup, offer to create it
-(`gh repo create <name> --private --source . --push`, after they confirm the name and account) and
-connect it to their Vercel project. Several people in one household can share one repo and one
-password; unrelated people each get their own.
+**Adding an athlete to a repo that's already published**: skip all of this — committing and pushing
+redeploys. Remind them everyone with the site password sees every athlete.
+
+1. **Git identity.** `git config user.email` must be an email of the GitHub account they'll use;
+   if it isn't (a work email is the classic), set it locally in the repo after they confirm.
+2. **Private repo they own.** Confirm the repo name and the GitHub account (`gh auth status`; with
+   several accounts, the active one must be theirs), then
+   `gh repo create <name> --private --source . --push`. Never public: it holds health data. Vercel
+   only connects a personal-account repo to its **owner**, so it can't live in someone else's
+   account. Several people in one household can share one repo; unrelated people each get their own.
+   Without `gh`, give them the steps to create it on github.com and the `git remote add` + `git push`.
+3. **Vercel project.** They do this in their browser: vercel.com → Add New → Project → pick the repo;
+   nothing to configure (`vercel.json` sets it). Wait for them to say it's imported, and ask for the
+   production URL.
+4. **Password — before sharing anything.** They add `SITE_PASSWORD` (and optionally `SITE_USER`,
+   default `coach`) in Project → Settings → Environment Variables, for Production and Preview, then
+   redeploy. **Don't ask for the password and don't type it**: it's theirs. If they prefer the CLI,
+   give them `vercel env add SITE_PASSWORD production` to run in their own terminal.
+5. **Verify it's locked.** Run `curl -s -o /dev/null -w '%{http_code}\n' https://<url>/` — it must be
+   `401`. If it's `200`, the password isn't set or the redeploy didn't happen: say so plainly and
+   don't move on. Then have them open the URL on their phone, log in once, and add it to the home
+   screen.
+6. From now on `/strata:session` pushes after each run and the site updates by itself.
+
+Details and traps: `${CLAUDE_PLUGIN_ROOT}/skills/training/reference/deploy.md`.
 
 Commit with only the new athlete's folder (plus the scaffold on a first setup). Tell them the next
 steps: `/strata:session <slug>` after each run, `/strata:weekly <slug>` at the end of
