@@ -26,11 +26,17 @@ the JSON (notes, feedback) is in that language too.
 2. Find today's entry in `A/sessions.json` (manual entries: set `cycle` and `week` from the plan week
    that contains the date, both `null` if none). With `"pendingReport": true` the objective data is
    already there.
-3. **Ask for what no sensor measures**, before writing anything:
-   - one question per `config.tracked[]` issue, built from its `fields[].prompt` (skip the whole
-     group with a single "did X show up?" when it didn't);
+3. **Ask for what no sensor measures**, before writing anything — **one question at a time with the
+   question tool** ("Asking the athlete" in the `training` skill), options built from the plan and
+   the data you just read, and the free-text field for detail. Never a numbered list of questions.
+   First share in one or two sentences what the data already shows, then ask, in this order:
+   - per `config.tracked[]` issue: first "did X show up?" (options: no / yes, mild / yes, it
+     stayed or got worse); only if yes, one question per field from `fields[].prompt`;
    - perceived effort (RPE 1-10);
-   - shoes (`config.gear.shoes`) — only if `gear.trackShoes` isn't `false` — and surface.
+   - shoes (`config.gear.shoes`, today's rotation first) — only if `gear.trackShoes` isn't
+     `false` — and surface (the place the GPS suggests first);
+   - anything the data raised that only they can explain (a different number of reps, walks to
+     classify as recovery or commute), one question each.
 4. Fill the entry and **delete `pendingReport`**. The long analysis goes in `notes` — that's where
    every detail belongs: it is the record for the doctor and for the athlete a month from now.
 5. Give the feedback **with the template below**. The full analysis stays in `notes`.

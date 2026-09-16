@@ -53,7 +53,7 @@ time.
    and say why. Runs in that gap are logged with `cycle: null`. After an abandoned cycle for
    injury, the next goal waits for the athlete to be cleared, and the first weeks are a return
    phase.
-3. **The new goal.** Run the wizard of `/strata:start` (same rules: one question per message,
+3. **The new goal.** Run the wizard of `/strata:start` (same rules: one question at a time with the question tool,
    plain text, no topic list shown) for steps 2, 4, 5 and 8 (goal, body, schedule, life load) — but **start from the history**, not from zero: current level from the last
    weeks of sessions, zones from the tests, tracked issues from the retro. Only ask what the data
    can't answer. If the goal isn't realistic for the time available, say it with the why.

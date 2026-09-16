@@ -124,6 +124,27 @@ and after a race there's recovery before week 1.
 - **Don't oversell a single anecdote** as evidence for a hypothesis. Ask when it happened and how
   often.
 
+## Asking the athlete
+
+Every question to the athlete — in `start`, `session`, `weekly`, `goal` — follows the same pattern:
+
+- **One question at a time, with the question tool** (`AskUserQuestion`): a short question, 2-4
+  suggested answers as options (each with a one-line description of what choosing it means), and
+  put the most likely answer first. The tool always adds a free-text "Other" field, so the athlete
+  can answer in their own words or add detail — say so the first time ("or write your own").
+- One question per call. Wait for the answer, confirm it in a few words, then ask the next. Don't
+  batch several questions into one call, and don't dump a numbered list of questions in text.
+- Options come from what you already know: the plan ("840v1 — today's rotation"), the data ("Parque
+  Rivera — where the GPS puts you"), the athlete's history. Numbers go as ranges that map to a
+  decision ("0 — nothing", "1-3 — mild, went away", "4+ — stayed or got worse").
+- Open-ended questions with no sensible options (a name, a race name, "tell me about the pain")
+  still go through the tool with options like "Let me describe it" / "Skip for now", or as plain
+  text when the tool isn't available.
+- Follow-ups only when an answer is ambiguous or opens something important (a pain, a constraint).
+- **Never answer for the athlete.** "I don't know" is a valid answer: note it and move on.
+- If the question tool isn't available in this environment, ask the same single question in plain
+  text, with the suggested answers written as short options.
+
 ## Language
 
 Infer the language from how the user writes to you, store it in `config.locale.lang`, and talk to

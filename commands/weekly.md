@@ -3,7 +3,8 @@ description: Weekly review of an athlete's training — progress or repeat next 
 argument-hint: "[athlete-slug]"
 ---
 
-Close the week for one athlete, using the `training` skill.
+Close the week for one athlete, using the `training` skill. Any question to the athlete goes one at a
+time with the question tool ("Asking the athlete" in the skill).
 
 **Athlete:** `$ARGUMENTS`. One folder in `athletes/` → that one; several and no slug → ask.
 `A = athletes/<slug>/`. `git pull` first. Talk in `config.locale.lang`.

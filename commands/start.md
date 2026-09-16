@@ -28,12 +28,13 @@ Check that `git config user.email` is the email of the GitHub account they'll de
 ## 2. Interview — a wizard, one question at a time
 
 **How to ask:**
-- **One question per message**, in plain conversational text, then stop and wait for the answer.
-  No forms, no option pickers or question tools, no tables, no list of everything you'll ask.
+- **One question at a time with the question tool, as described in "Asking the athlete" in the
+  `training` skill**: suggested answers as options, the free-text field for anything else. No
+  forms, no tables, no numbered list of questions.
 - **Never show the list of topics below.** It's your script, not something to read out.
 - Each step below is a **topic**, and most topics take several single questions: ask them one by
-  one. Start each message with a short marker of the topic, e.g. `Paso 3 de 8 · Dónde estás hoy`,
-  then the question. When a question needs context (why it matters, what the choices mean), one or
+  one. Put a short marker of the topic in the question's header or first words, e.g.
+  `Paso 3 de 8 · Dónde estás hoy`. When a question needs context (why it matters, what the choices mean), one or
   two sentences before it.
 - **React to the answer before moving on**: confirm what you understood in a few words, and ask a
   follow-up only if the answer was ambiguous or opens something important (a pain, a constraint).
@@ -41,8 +42,8 @@ Check that `git config user.email` is the email of the GitHub account they'll de
 - If they don't know or don't want to answer, say what that means for the plan, note it, and go to
   the next step. **Never fill an answer in yourself.** If the person answering isn't the athlete,
   keep going with what they know and list the rest as open items for the athlete.
-- Offer a sensible default inside the question when there is one ("most people start with 3 days —
-  does that work, or would you rather tell me which days you have?"), but let them answer freely.
+- Put the sensible default first among the options ("3 days — the usual start"), and let the
+  free-text field cover the rest.
 - Write nothing to disk until the step that needs it is answered.
 
 **Steps** (in this order; skip questions an earlier answer already covered):
